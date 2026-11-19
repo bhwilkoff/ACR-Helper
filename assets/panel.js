@@ -84,6 +84,44 @@
     show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.')],
       [button('Sign in with Google', 'filled', () => signIn(false))]);
     sendStage({ type: 'signin' });
+    oneTap();
+  }
+
+  // Google's One Tap prompt, inside the panel (Meet's review asks for it when
+  // someone is not signed in). It only says who the person is; the Sheets
+  // permission still comes from the token client, now told which account.
+  let oneTapShown = false;
+  function oneTap() {
+    if (oneTapShown || MOCK || HARNESS || !ACR_CONFIG.oauthClientId) return;
+    const id = window.google && google.accounts && google.accounts.id;
+    if (!id) { setTimeout(oneTap, 500); return; }
+    oneTapShown = true;
+    id.initialize({
+      client_id: ACR_CONFIG.oauthClientId,
+      auto_select: true,
+      cancel_on_tap_outside: false,
+      use_fedcm_for_prompt: true,
+      callback: r => {
+        const email = emailFromCredential(r && r.credential);
+        if (!email) return;
+        try { localStorage.setItem('acr-hint', email); } catch (_) {}
+        show([el('p', null, 'Signed in to Google as ' + email + '.')],
+          [button('Open the review', 'filled', () => signIn(false))]);
+      },
+    });
+    id.prompt(n => {
+      if (n && n.isNotDisplayed && n.isNotDisplayed()) S.lastError = 'One Tap not shown: ' + n.getNotDisplayedReason();
+      else if (n && n.isSkippedMoment && n.isSkippedMoment()) S.lastError = 'One Tap skipped: ' + n.getSkippedReason();
+      diag();
+    });
+  }
+
+  function emailFromCredential(jwt) {
+    try {
+      const part = String(jwt).split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const json = JSON.parse(decodeURIComponent(escape(atob(part + '==='.slice((part.length + 3) % 4)))));
+      return json.email_verified !== false ? String(json.email || '') : '';
+    } catch (_) { return ''; }
   }
   function viewLobby() {
     const sel = el('select');
