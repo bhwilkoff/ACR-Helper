@@ -4,7 +4,7 @@
     "meet": {
       "web": {
         "sidePanelUrl": "https://bhwilkoff.github.io/ACR-Helper/addon/",
-        "supportsScreenSharing": true,
+        "supportsScreenSharing": false,
         "addOnOrigins": ["https://bhwilkoff.github.io"],
         "logoUrl": "https://bhwilkoff.github.io/ACR-Helper/assets/logo.png",
         "darkModeLogoUrl": "https://bhwilkoff.github.io/ACR-Helper/assets/logo-dark.png"

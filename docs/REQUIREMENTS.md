@@ -210,6 +210,11 @@ These are hard requirements; a build that breaks one does not ship.
 - P10. The stage shows applicant data inside Meet. Members should not
   record ACR calls; the add-on shows no warning (only essential words),
   but the README for the committee says so.
+- P12. **No screen-share fallback.** The deployment sets
+  `supportsScreenSharing: false`. With it on, Meet offered to share the
+  chair's tab "so those without the add-on can follow along", which would
+  show applicants to people the sheet does not admit (measured in Meet,
+  November 19, 2026).
 - P11. Nothing is cached after the call. Closing the panel drops tokens,
   rows, keys, and votes.
 
