@@ -67,6 +67,11 @@
   Ben Wilkoff, Nov 19 2026 in ACR Helper" (read back from the sheet).
   A participant without the add-on (gmail) sees no applicant data;
   Meet tells them "The activity is not available to you."
+- **Third call (wqv-atvn-zei), v0.4.0, verified in Meet**: One Tap
+  signed the panel in inside the sidebar with no window and no click
+  ("Signed in to Google as ben.wilkoff@minerva.edu"); Open the review
+  then got the Sheets token with no visible Google window to answer, and
+  the lobby appeared. Sign-in is now one press, inside the sidebar.
 - **Not yet verified**: two different voters with access (needs a
   second account that has the add-on); the in-panel no-access refusal
   for someone who has the add-on but no sheet access; whether the
