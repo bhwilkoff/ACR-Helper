@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Privacy policy, ACR Helper</title>
+<link rel="icon" href="../assets/logo.png">
+<link rel="stylesheet" href="../assets/site.css?v=0.1.0">
+</head>
+<body>
+<header class="site-head"><a href="../" class="brand"><img src="../assets/logo.png" alt="" width="32" height="32"> ACR Helper</a>
+<nav><a href="../privacy/">Privacy</a><a href="../terms/">Terms</a><a href="../support/">Support</a></nav></header>
+<main class="doc">
+<h1>Privacy policy</h1>
+<p class="muted">Last updated November 19, 2026.</p>
+<p>ACR Helper is a Google Meet&trade; add-on made by Ben Wilkoff. This page says what it reads, what it writes, and where information goes.</p>
+<h2>What ACR Helper asks Google for</h2>
+<ul>
+<li><strong>Your name and email address</strong> (the <code>openid</code>, <code>email</code>, and <code>profile</code> permissions), to show the committee who has voted and to name the person who recorded a decision.</li>
+<li><strong>Access to your Google Sheets&trade; spreadsheets</strong> (the <code>spreadsheets</code> permission), used only on the committee's own spreadsheet: to check that you can open it, to read its rows, to keep a hidden tab in it holding the key that encrypts the call's messages, and, for the chair, to write the committee's decision and a note into the applicant's row. ACR Helper does not open, read, or change any other spreadsheet.</li>
+</ul>
+<h2>Where spreadsheet information goes</h2>
+<ul>
+<li>Rows are read from Google directly into your own browser, inside Meet, and shown only to you. They are never sent to a server run by ACR Helper, never stored in a database, a log, or your browser's storage, and never shared with anyone else.</li>
+<li>Everyone in the call sees the same applicant because each person's own add-on reads the row itself, with that person's own Google permission.</li>
+<li>The access token Google gives your browser stays in memory and is gone when the add-on closes.</li>
+</ul>
+<h2>Votes and messages between add-ons</h2>
+<p>To keep everyone on the same applicant and to collect votes, add-ons in the same call send each other short messages through Supabase Realtime, a message relay. Every message is encrypted in your browser before it leaves, with a key that only people who can open the spreadsheet can read; the relay sees only scrambled data and stores nothing. Votes are sealed so that only the chair's add-on can open them, and only when the chair reveals them. Votes are never stored anywhere.</p>
+<h2>What is kept in your browser</h2>
+<p>Only the email address you last signed in with, so Google can skip asking which account to use. Nothing from the spreadsheet is kept.</p>
+<h2>Google API Services User Data Policy</h2>
+<p>ACR Helper's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements. Information from Google is not used for advertising, not sold, not transferred to others except as described above to run the add-on, and not used to train any artificial intelligence or machine learning model.</p>
+<h2>Removing access</h2>
+<p>You can remove ACR Helper's access at any time at <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>. Being removed from the committee's spreadsheet also ends your access to everything in ACR Helper the next time it opens.</p>
+<h2>Contact</h2>
+<p>Questions about privacy: <a href="mailto:benwilkoff@gmail.com">benwilkoff@gmail.com</a>.</p>
+</main>
+<footer class="site-foot"><p>ACR Helper is made by Ben Wilkoff. Google Meet&trade; and Google Sheets&trade; are trademarks of Google LLC.</p></footer>
+</body>
+</html>
