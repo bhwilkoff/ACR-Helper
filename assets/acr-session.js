@@ -43,6 +43,10 @@
         else await this._maybeBroadcastPresence();
       }
       if (m.t === 'vote') await this._onVote(m);
+      if (m.t === 'noted' && this.st && m.sid === this.st.sid && m.from && this._canNote(m.from.email)) {
+        this.st.rowRev = (this.st.rowRev || 0) + 1;
+        await this._broadcast();
+      }
     }
 
     _seen(from) {
@@ -90,6 +94,11 @@
       st.rev++;
       st.voters = Array.from(this.sealed.values(), v => v.name).sort();
       st.present = Math.max(this._presentCount(), st.voters.length);
+      const t = this.now();
+      st.people = Array.from(this.present.entries())
+        .filter(([, p]) => t - p.at < PRESENT_MS)
+        .map(([email, p]) => ({ email, name: p.name }))
+        .sort((a, b) => a.name.localeCompare(b.name));
       this.onChange(this.view());
       await this._send({ t: 'state', st });
     }
@@ -129,6 +138,7 @@
         chair: this.me, chairPub: this.chairKeys.publicJwk,
         tab: applicant.tab, sheetRow: applicant.sheetRow, n: applicant.n, total: applicant.total,
         voters: [], present: 1, revealed: null, recorded: null,
+        noteTaker: null, rowRev: 0, people: [],
       };
       this.myVote = null;
       await this._broadcast();
@@ -173,6 +183,30 @@
       await this._broadcast();
     }
 
+    // The chair names who may add notes (null = the chair alone).
+    async setNoteTaker(person) {
+      this._chairOnly();
+      this.st.noteTaker = person && person.email ? { email: person.email, name: String(person.name || person.email) } : null;
+      await this._broadcast();
+    }
+
+    _canNote(email) {
+      const st = this.st;
+      if (!st || !email) return false;
+      if (st.chair && st.chair.email === email) return true;
+      return !!(st.noteTaker && st.noteTaker.email === email);
+    }
+
+    canNote() { return this._canNote(this.me.email); }
+
+    // After writing a note to the sheet, ask everyone to re-read the row.
+    async noted() {
+      if (!this.canNote()) throw new Error('Only the chair or the note-taker can add notes');
+      const m = { t: 'noted', sid: this.st.sid, from: this.me };
+      if (this.isChair) { this.st.rowRev = (this.st.rowRev || 0) + 1; await this._broadcast(); }
+      else await this._send(m);
+    }
+
     _chairOnly() {
       if (!this.isChair || !this.st) throw new Error('Only the chair can do that');
     }
@@ -184,6 +218,8 @@
         isChair: this.isChair, chair: st.chair, tab: st.tab, sheetRow: st.sheetRow, n: st.n, total: st.total,
         round: st.round, voters: st.voters.slice(), present: st.present,
         revealed: st.revealed ? st.revealed.slice() : null, recorded: st.recorded, myVote: this.myVote,
+        noteTaker: st.noteTaker || null, canNote: this.canNote(), rowRev: st.rowRev || 0,
+        people: (st.people || []).slice(),
       };
     }
 

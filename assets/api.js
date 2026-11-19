@@ -70,8 +70,8 @@
       method: 'POST',
       body: JSON.stringify({ requests: [{ updateCells: {
         start: { sheetId, rowIndex, columnIndex: colIndex },
-        rows: [{ values: [{ userEnteredValue: { stringValue: value }, note }] }],
-        fields: 'userEnteredValue,note',
+        rows: [{ values: [note === undefined ? { userEnteredValue: { stringValue: value } } : { userEnteredValue: { stringValue: value }, note }] }],
+        fields: note === undefined ? 'userEnteredValue' : 'userEnteredValue,note',
       } }] }),
     });
   }

@@ -68,7 +68,9 @@ applicant data somewhere new. The links open in a new browser tab.
   applicant's position ("12 of 48"), and these columns, in the sheet's
   own names and values, untouched (Ben, November 19, 2026):
   - **Profile**: First Name, Last Name, Has a Minerva Family Member,
-    Citizenship Country.
+    Citizenship Country (a two-letter code is shown as its flag and
+    English name, e.g. "🇧🇷 Brazil"; Ben, November 19), Intended
+    Concentration (added November 19).
   - **Scores**: Math Score, Understanding Score, Reasoning Score,
     Creativity Score, Average on first 4 challenges, Original Transcript
     Score, Four Point Transcript Score, Written Score, Expression Score,
@@ -161,6 +163,17 @@ applicant data somewhere new. The links open in a new browser tab.
 - R24. The decision cell also gets a **cell note**: "Recorded by <chair's
   Google name>, <Mon D YYYY> in ACR Helper". No vote information goes in
   the note (Ben chose "Word + chair + date in a cell note").
+
+### 4.5a Notes (Ben, November 19, 2026, for Samantha, who usually chairs)
+
+- R24a. The chair, or one person the chair names as **note-taker** from
+  the people present, can add notes from the sidebar at any time while
+  an applicant is on screen. Each note is appended to **Notes from
+  Admissions** (found by header name) on a new line: "Nov 20 2026,
+  Samantha Maskey (ACR): <note>". Existing text is never changed.
+- R24b. Writing needs edit access; a view-only note-taker is told so.
+  After a note is written, every panel re-reads the row so every stage
+  shows it.
 
 ### 4.6 States (every view)
 

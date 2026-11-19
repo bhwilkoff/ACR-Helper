@@ -84,3 +84,20 @@ test('only a plain permission refusal means not shared', () => {
   assert.strictEqual(ACR.refusalKind(403, 'SERVICE_DISABLED', 'Google Sheets API has not been used in project 1 before or it is disabled.'), 'api');
   assert.strictEqual(ACR.refusalKind(500, '', 'boom'), 'other');
 });
+
+test('a two-letter citizenship code becomes flag and country name', () => {
+  assert.strictEqual(ACR.countryLabel('BR'), '\u{1F1E7}\u{1F1F7} Brazil');
+  assert.strictEqual(ACR.countryLabel(' us '), '\u{1F1FA}\u{1F1F8} United States');
+  assert.strictEqual(ACR.countryLabel('TEST-Genovia'), 'TEST-Genovia');
+  assert.strictEqual(ACR.countryLabel('ZZ'), 'ZZ');
+  const H2 = ['Unique ID', 'User ID', 'Citizenship Country', 'Intended Concentration'];
+  const a = ACR.buildApplicant(H2, ['2026-TEST-0001', '1', 'IN', 'TEST Natural Sciences']);
+  assert.deepStrictEqual(a.groups[0].fields.map(f => f.value), ['\u{1F1EE}\u{1F1F3} India', 'TEST Natural Sciences']);
+});
+
+test('notes append on a new line with date and name', () => {
+  const d = new Date(2026, 10, 20);
+  assert.strictEqual(ACR.appendNote('', 'Strong essay', 'Samantha Maskey', d), 'Nov 20 2026, Samantha Maskey (ACR): Strong essay');
+  assert.strictEqual(ACR.appendNote('NULL', 'x', 'A', d), 'Nov 20 2026, A (ACR): x');
+  assert.strictEqual(ACR.appendNote('Earlier note.\n', ' Waitlist, revisit ', 'A', d), 'Earlier note.\nNov 20 2026, A (ACR): Waitlist, revisit');
+});

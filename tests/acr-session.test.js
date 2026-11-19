@@ -169,3 +169,20 @@ test('members who opened before the chair started are counted', async () => {
   await chair.start(APP); await drain(people);
   assert.strictEqual(m1.view().present, 3);
 });
+
+test('the chair names a note-taker; only chair and note-taker may note; a note bumps rowRev for all', async () => {
+  const { people } = await room(3);
+  const [chair, m1, m2] = people;
+  await chair.start(APP); await m1.join(); await m2.join(); await drain(people);
+  assert.strictEqual(m1.view().canNote, false);
+  assert.strictEqual(chair.view().canNote, true);
+  assert.deepStrictEqual(chair.view().people.map(p => p.name), ['Test Chair', 'Test Member 1', 'Test Member 2']);
+  await chair.setNoteTaker({ email: 't1@example.invalid', name: 'Test Member 1' }); await drain(people);
+  assert.strictEqual(m1.view().canNote, true);
+  assert.strictEqual(m2.view().canNote, false);
+  await assert.rejects(m2.noted());
+  const before = m2.view().rowRev;
+  await m1.noted(); await drain(people);
+  assert.strictEqual(m2.view().rowRev, before + 1);
+  await assert.rejects(m1.setNoteTaker(null));
+});

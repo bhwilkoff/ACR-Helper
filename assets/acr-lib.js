@@ -1,6 +1,6 @@
 (function (root) {
   const STAGE_GROUPS = [
-    { title: 'Profile', columns: ['First Name', 'Last Name', 'Has a Minerva Family Member', 'Citizenship Country'] },
+    { title: 'Profile', columns: ['First Name', 'Last Name', 'Has a Minerva Family Member', 'Citizenship Country', 'Intended Concentration'] },
     { title: 'Scores', columns: [
       'Math Score', 'Understanding Score', 'Reasoning Score', 'Creativity Score',
       'Average on first 4 challenges', 'Original Transcript Score', 'Four Point Transcript Score',
@@ -15,6 +15,8 @@
   const ID_COLUMN = 'Unique ID';
   const PK_COLUMN = 'User ID';
   const DECISION_COLUMN = 'App Review Committee recommends admit?';
+  const NOTES_COLUMN = 'Notes from Admissions';
+  const COUNTRY_COLUMN = 'Citizenship Country';
 
   const DECISIONS = ['Admit', 'Waitlist', 'Reject'];
   const VOTES = ['Admit', 'Waitlist', 'Reject', 'Discuss'];
@@ -69,7 +71,9 @@
         const i = idx.get(headerKey(c));
         if (i === undefined) { missing.push(c); continue; }
         const v = cell(row, i);
-        if (!isEmpty(v)) fields.push({ label: headerLabel(headers[i]), value: v.trim() });
+        if (isEmpty(v)) continue;
+        const value = headerKey(c) === headerKey(COUNTRY_COLUMN) ? countryLabel(v) : v.trim();
+        fields.push({ label: headerLabel(headers[i]), value });
       }
       if (fields.length) out.push({ title: g.title, fields });
     }
@@ -112,6 +116,31 @@
   function decisionNote(chairName, date) {
     const d = date || new Date();
     return `Recorded by ${chairName}, ${MONTHS[d.getMonth()]} ${d.getDate()} ${d.getFullYear()} in ACR Helper`;
+  }
+
+  // A two-letter ISO 3166 code becomes its flag and English name ("BR" ->
+  // "🇧🇷 Brazil"), from the browser's own region names. Anything else is
+  // shown as the sheet has it.
+  function countryLabel(v) {
+    const s = String(v || '').trim();
+    if (!/^[A-Za-z]{2}$/.test(s)) return s;
+    const code = s.toUpperCase();
+    let name = code;
+    try { name = new Intl.DisplayNames(['en'], { type: 'region', fallback: 'none' }).of(code) || code; } catch (_) {}
+    if (name === code || /unknown/i.test(name)) return code;
+    const flag = String.fromCodePoint(...[...code].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65));
+    return flag + ' ' + name;
+  }
+
+  // Notes from the sidebar go on a new line with the date and the writer's name.
+  function noteLine(text, name, date) {
+    const d = date || new Date();
+    return `${MONTHS[d.getMonth()]} ${d.getDate()} ${d.getFullYear()}, ${name} (ACR): ${String(text).trim()}`;
+  }
+  function appendNote(existing, text, name, date) {
+    const line = noteLine(text, name, date);
+    const before = String(existing || '');
+    return isEmpty(before) ? line : before.replace(/\s+$/, '') + '\n' + line;
   }
 
   // rows: data rows only (header removed); returns index or -1
@@ -159,7 +188,7 @@
 
   const lib = {
     refusalKind,
-    STAGE_GROUPS, ID_COLUMN, PK_COLUMN, DECISION_COLUMN, DECISIONS, VOTES,
+    STAGE_GROUPS, ID_COLUMN, PK_COLUMN, DECISION_COLUMN, NOTES_COLUMN, DECISIONS, VOTES, countryLabel, appendNote,
     isEmpty, headerKey, headerLabel, findHeaderRow, columnIndex, buildApplicant, buildLinks,
     decisionToCell, cellToDecision, decisionNote, nextUndecided, applicantRows, tally,
     columnLetter, quoteTab,

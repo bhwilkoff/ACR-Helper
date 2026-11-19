@@ -51,6 +51,8 @@
       warn.append(b);
       nodes = [warn].concat(nodes);
     }
+    const notesBox = document.getElementById('notes');
+    if (notesBox) notesBox.hidden = true;
     $main.replaceChildren(...nodes);
     $foot.replaceChildren(...(footNodes || []));
     $foot.hidden = !(footNodes && footNodes.length);
@@ -198,7 +200,8 @@
     }
     if (a.decisionCell && !sv.recorded) nodes.push(el('p', 'muted', 'In the sheet: ' + a.decisionCell + (a.decision ? ' (' + a.decision + ')' : '')));
     if (!sv.isChair) nodes.push(el('p', 'muted', 'Chair: ' + sv.chair.name));
-    show(nodes.concat(sv.isChair ? chairMain(sv).concat([goToRow(sv)]) : []), sv.isChair ? chairControls(sv, a, i) : []);
+    show(nodes.concat(sv.isChair ? chairMain(sv).concat([noteTakerPicker(sv), goToRow(sv)]) : []), sv.isChair ? chairControls(sv, a, i) : []);
+    updateNotes(sv, i);
   }
 
   function chairMain(sv) {
@@ -214,6 +217,74 @@
     }
     return [el('h3', 'label', 'Committee decision'), grid];
   }
+
+  // The chair alone, or one person the chair names, may add notes.
+  function noteTakerPicker(sv) {
+    const box = el('label', 'field');
+    const sel = el('select');
+    const me = el('option', null, 'Chair (me)'); me.value = ''; sel.append(me);
+    for (const p of sv.people) {
+      if (p.email === S.me.email) continue;
+      const o = el('option', null, p.name); o.value = p.email; sel.append(o);
+    }
+    sel.value = sv.noteTaker ? sv.noteTaker.email : '';
+    if (sv.noteTaker && sel.value !== sv.noteTaker.email) {
+      const o = el('option', null, sv.noteTaker.name); o.value = sv.noteTaker.email; sel.append(o); sel.value = o.value;
+    }
+    sel.addEventListener('change', () => {
+      const p = sv.people.find(x => x.email === sel.value);
+      act(() => S.session.setNoteTaker(p || null));
+    });
+    box.append(el('span', 'label', 'Note-taker'), sel);
+    return box;
+  }
+
+  // The notes box sits outside the redrawn area so typing survives redraws.
+  const $notes = document.getElementById('notes');
+  const $noteText = document.getElementById('note-text');
+  const $noteAdd = document.getElementById('note-add');
+  const $noteStatus = document.getElementById('note-status');
+  const $noteForm = document.getElementById('note-form');
+  const $noteOpen = document.getElementById('note-open');
+  $noteOpen.addEventListener('click', () => {
+    $noteForm.hidden = !$noteForm.hidden;
+    $noteOpen.textContent = $noteForm.hidden ? 'Write a note' : 'Close';
+    if (!$noteForm.hidden) $noteText.focus();
+  });
+  let notesFor = null;
+  function updateNotes(sv, i) {
+    const on = !!(sv && sv.canNote && !S.confirm && i >= 0);
+    $notes.hidden = !on;
+    const key = sv ? sv.tab + '|' + sv.sheetRow : null;
+    if (key !== notesFor) {
+      notesFor = key; $noteText.value = ''; $noteStatus.textContent = '';
+      $noteForm.hidden = true; $noteOpen.textContent = 'Write a note';
+    }
+  }
+  $noteAdd.addEventListener('click', async () => {
+    const text = $noteText.value.trim();
+    const sv = S.sv;
+    if (!text || !sv) return;
+    const col = ACR.columnIndex(S.headers).get(ACR.headerKey(ACR.NOTES_COLUMN));
+    const i = rowIndexOf(sv.sheetRow);
+    if (col === undefined) { $noteStatus.textContent = 'This tab has no "' + ACR.NOTES_COLUMN + '" column.'; return; }
+    if (i < 0) return;
+    $noteAdd.disabled = true;
+    $noteStatus.textContent = 'Adding…';
+    try {
+      const current = await API.getCell(SID, S.tab, sv.sheetRow, col);
+      const value = ACR.appendNote(current, text, S.me.name);
+      await API.writeCell(SID, S.tab, S.sheetTabId, sv.sheetRow, col, value);
+      setCell(i, col, value);
+      $noteText.value = '';
+      $noteStatus.textContent = 'Added.';
+      await S.session.noted();
+    } catch (e) {
+      $noteStatus.textContent = e.status === 403 ? 'Your account can only view this spreadsheet, so it cannot add notes.' : 'Something went wrong: ' + e.message;
+    } finally {
+      $noteAdd.disabled = false;
+    }
+  });
 
   function goToRow(sv) {
     const box = el('div', 'goto');
@@ -398,7 +469,13 @@
     S.transport = transport;
     S.session = new ACRSession.Session({
       me: S.me, groupKey, channel, transport,
-      onChange: v => { if (S.sv && v && v.round !== S.sv.round) { S.pick = null; S.confirm = null; } S.sv = v; render(); },
+      onChange: v => {
+        if (S.sv && v && v.round !== S.sv.round) { S.pick = null; S.confirm = null; }
+        const reread = S.sv && v && v.rowRev !== S.sv.rowRev && S.tab === v.tab;
+        S.sv = v;
+        if (reread) loadTab(v.tab).then(render, e => { S.lastError = e.message; render(); });
+        else render();
+      },
     });
     if (transport.onReconnect) transport.onReconnect(() => S.session.join().catch(() => {}));
     await S.session.join();
