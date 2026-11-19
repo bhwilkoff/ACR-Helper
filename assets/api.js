@@ -110,5 +110,10 @@
     return (v[0] && v[0][0] !== undefined) ? String(v[0][0]) : '';
   }
 
-  window.API = { useMock, setToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, ApiError };
+  function mockSet(tab, rowIndex, colIndex, value) {
+    if (!mock) throw new Error('mock only');
+    mock.tabs[tab][rowIndex][colIndex] = value;
+  }
+
+  window.API = { mockSet, useMock, setToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, ApiError };
 })();

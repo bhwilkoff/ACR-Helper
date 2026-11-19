@@ -69,8 +69,10 @@
       if (!newer) return;
       if (this.isChair && cur && st.sid !== cur.sid) this.isChair = false;
       if (!cur || cur.round !== st.round || cur.sid !== st.sid) this.myVote = null;
+      const newSession = !cur || cur.sid !== st.sid;
       this.st = st;
       this.onChange(this.view());
+      if (newSession && !this.isChair) this._send({ t: 'here', from: this.me }).catch(() => {});
     }
 
     async _onVote(m) {

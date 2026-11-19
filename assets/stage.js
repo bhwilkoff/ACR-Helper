@@ -105,7 +105,7 @@
     if (!view || view.classList.contains('stage-msg')) return;
     const avail = window.innerHeight - (DIAG ? 40 : 0);
     root.style.zoom = '1';
-    const h = view.getBoundingClientRect().height;
+    const h = Math.max(view.getBoundingClientRect().height, view.scrollHeight) + 8;
     const z = h > avail ? Math.max(0.45, avail / h) : 1;
     root.style.zoom = String(z);
   }

@@ -43,6 +43,14 @@
     return links;
   }
   function show(nodes, footNodes) {
+    if (S.expiring) {
+      const warn = el('p', 'error', 'Your Google sign-in ends in a few minutes. ');
+      const b = el('button', 'btn small', 'Stay signed in');
+      b.type = 'button';
+      b.addEventListener('click', () => signIn(true));
+      warn.append(b);
+      nodes = [warn].concat(nodes);
+    }
     $main.replaceChildren(...nodes);
     $foot.replaceChildren(...(footNodes || []));
     $foot.hidden = !(footNodes && footNodes.length);
@@ -149,7 +157,7 @@
     }
     if (a.decisionCell && !sv.recorded) nodes.push(el('p', 'muted', 'In the sheet: ' + a.decisionCell + (a.decision ? ' (' + a.decision + ')' : '')));
     if (!sv.isChair) nodes.push(el('p', 'muted', 'Chair: ' + sv.chair.name));
-    show(nodes.concat(sv.isChair ? chairMain(sv) : []), sv.isChair ? chairControls(sv, a, i) : []);
+    show(nodes.concat(sv.isChair ? chairMain(sv).concat([goToRow(sv)]) : []), sv.isChair ? chairControls(sv, a, i) : []);
   }
 
   function chairMain(sv) {
@@ -164,6 +172,17 @@
       grid.append(b);
     }
     return [el('h3', 'label', 'Committee decision'), grid];
+  }
+
+  function goToRow(sv) {
+    const box = el('div', 'goto');
+    const input = el('input');
+    input.type = 'number'; input.min = '1'; input.max = String(S.rows.length); input.placeholder = String(sv.n);
+    input.setAttribute('aria-label', 'Applicant number');
+    const go = button('Go', 'small', () => { const n = Number(input.value); if (n >= 1 && n <= S.rows.length) goTo(n - 1); });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') go.click(); });
+    box.append(el('span', 'muted', 'Go to applicant'), input, go);
+    return box;
   }
 
   function chairControls(sv, a, i) {
@@ -308,17 +327,51 @@
     const groupKey = await ACRCrypto.importGroupKey(keyB64);
     const channel = await ACRCrypto.channelName(keyB64, S.meetingCode || 'no-meeting');
     const transport = ACRTransport.make(channel, { local: HARNESS || MOCK });
+    S.transport = transport;
     S.session = new ACRSession.Session({
       me: S.me, groupKey, channel, transport,
       onChange: v => { if (S.sv && v && v.round !== S.sv.round) { S.pick = null; S.confirm = null; } S.sv = v; render(); },
     });
+    if (transport.onReconnect) transport.onReconnect(() => S.session.join().catch(() => {}));
     await S.session.join();
     setInterval(() => S.session.heartbeat().catch(() => {}), 15000);
   }
 
-  async function signIn() {
-    viewError('Google sign-in is not set up yet (needs the OAuth client ID).');
+  // Sign-in runs in a popup on our origin; the token comes back by postMessage
+  // and lives only in memory (REQUIREMENTS R1-R3).
+  function signIn(again) {
+    if (!ACR_CONFIG.oauthClientId) return viewError('Google sign-in is not set up yet (needs the OAuth client ID).');
+    const popup = window.open('signin/' + (again ? '?again=1' : ''), 'acr-signin', 'width=480,height=640');
+    if (!popup) return viewError('The sign-in window was blocked. Allow pop-ups for Meet and try again.');
+    const onMsg = async e => {
+      if (e.origin !== location.origin || e.source !== popup || !e.data || !e.data.acrToken) return;
+      window.removeEventListener('message', onMsg);
+      API.setToken(e.data.acrToken);
+      S.tokenExpiresAt = Date.now() + e.data.expiresIn * 1000;
+      S.expiring = false;
+      if (again && S.session) return render();
+      await afterSignIn();
+    };
+    window.addEventListener('message', onMsg);
   }
+
+  async function afterSignIn() {
+    try {
+      S.me = await API.getUserInfo();
+      if (!(await checkAccess())) return;
+      if (!S.session) await openSession();
+      setTimeout(() => { if (!S.sv) viewLobby(); }, 2500);
+      show([el('p', 'muted', 'Looking for a review in this call…')]);
+    } catch (e) {
+      if (e.status === 401) return viewSignIn();
+      viewError(e.message || String(e));
+    }
+  }
+
+  setInterval(() => {
+    if (!S.tokenExpiresAt || S.expiring) return;
+    if (S.tokenExpiresAt - Date.now() < 5 * 60000) { S.expiring = true; render(); }
+  }, 30000);
 
   function diag() {
     if (!DIAG) return;
@@ -327,6 +380,8 @@
     $diag.textContent = 'v' + ACR_CONFIG.version + (MOCK ? ' MOCK' : '') + ' me=' + (S.me ? S.me.name : '-') +
       ' chair=' + (sv ? sv.isChair : '-') + ' activity=' + S.activity + ' tab=' + (S.tab || '-') +
       ' row=' + (sv ? sv.sheetRow : '-') + ' present=' + (sv ? sv.present : '-') +
+      ' channel=' + (S.transport ? S.transport.kind + (S.transport.state ? ':' + S.transport.state : '') : '-') +
+      (S.tokenExpiresAt ? ' token=' + Math.round((S.tokenExpiresAt - Date.now()) / 60000) + 'm' : '') +
       (S.session && S.session.lastError ? '\nsession: ' + S.session.lastError : '') +
       (S.lastError ? '\nlast error: ' + S.lastError : '');
   }
@@ -341,11 +396,7 @@
       }
       if (!HARNESS) await connectMeet();
       if (!MOCK) { viewSignIn(); return; }
-      S.me = await API.getUserInfo();
-      if (!(await checkAccess())) return;
-      await openSession();
-      setTimeout(() => { if (!S.sv) viewLobby(); }, 1500);
-      show([el('p', 'muted', 'Looking for a review in this call…')]);
+      await afterSignIn();
     } catch (e) {
       viewError(e.message || String(e));
     }

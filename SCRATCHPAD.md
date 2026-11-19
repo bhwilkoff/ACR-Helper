@@ -2,21 +2,23 @@
 
 ## Current state
 
-- **Status**: requirements written (`docs/REQUIREMENTS.md`), Ben's
-  choices logged (DECISIONS.md 003-010); no add-on code yet.
-- **Active milestone**: M1, panel + stage shells, mock mode with fake
-  applicants, offline stage harness (REQUIREMENTS section 8).
-- **Last session**: 2026-11-19, requirements from Ben's answers; test
-  sheet `1ZCsMmoUErQurrT7SQX5yz5F_fHDAm2DiJxM-eMTcnso` made with fake rows.
-- **Next actions**:
-  1. Autonomous loop builds M1, then M3-M5 logic in mock mode (link
-     building, field filtering, decision mapping, encrypted channel
-     envelope, sealed votes), with unit tests and stage screenshots.
-  2. Ben does REQUIREMENTS section 9 (Cloud project, OAuth client,
-     Pages, Supabase, deployment) and sends the four non-secret values.
-  3. M2 onward verified only in a real call by Ben.
+- **Status**: M1-M5 BUILT in mock mode and checked offline in the dev
+  harness (three TEST panels + a stage). NOTHING verified in Meet.
+- **Active milestone**: M2, blocked on Ben's setup values.
+- **Last session**: 2026-11-19, requirements, then a four-tick loop.
+- **Blocked on Ben** (REQUIREMENTS section 9): Cloud project number,
+  OAuth client ID (origin `https://bhwilkoff.github.io`), Supabase URL
+  and publishable key, GitHub Pages on, deployment JSON
+  (`tools/meet-addon/deployment.json`) installed, a logo, test copy
+  shared with the test accounts, and permission to push.
+- **Then**: put the four values in `assets/config.js`, bump `?v=`,
+  push, and Ben tests in a real call with two profiles (one with sheet
+  access, one without), on the TEST sheet only.
 - **Open questions**: REQUIREMENTS O7 (Video Recordings / Fast Review
   Page columns).
+- **Run locally**: `python3 -m http.server 8080`, open
+  `http://localhost:8080/tools/dev/` (add `?diag=1`). Tests:
+  `node --test tests/*.test.js`.
 
 ---
 
@@ -29,6 +31,27 @@
 ---
 
 ## Session log
+
+### 2026-11-19: loop tick 4, confirm path, Go to row, sign-in, realtime
+
+- **Found**: voting flow working in the harness; confirm path undriven.
+- **Done**: Go to applicant; sign-in popup (`addon/signin/`, Google
+  Identity Services token client, token back by postMessage, memory
+  only, "Stay signed in" 5 minutes before expiry); Supabase Realtime
+  broadcast over its raw websocket (`assets/realtime.js`, no
+  third-party script, rejoin + resync); deployment JSON. Fixed:
+  members who opened before the chair started were not counted (test
+  seen failing first); the Scores two-column rule lost to a later rule,
+  so small stages hit the zoom floor and clipped.
+- **Verified (offline harness only)**: changing the cell behind the
+  chair's back brings up "It now says: Yes. Replace it with No
+  (Reject)?" and Replace writes `No` (mock); Go to 9 moves all three
+  panels; "0 of 3 have voted" with three panels; the recorded stage fits
+  at 560x315 and 1280x720. 22 tests pass.
+- **Built, not verified**: sign-in popup, real Sheets reads/writes and
+  the cell note, `_acr` tab creation, Supabase transport, Meet SDK
+  calls (startActivity, notifyMainStage, getMeetingInfo).
+- **Left**: everything in "Blocked on Ben".
 
 ### 2026-11-19: loop tick 3, voting, reveal, record in the panel
 

@@ -161,3 +161,11 @@ test('presence counts people seen in the last 45 seconds', async () => {
   await chair.heartbeat(); await drain(people);
   assert.strictEqual(m1.view().present, 2);
 });
+
+test('members who opened before the chair started are counted', async () => {
+  const { people } = await room(3);
+  const [chair, m1, m2] = people;
+  await m1.join(); await m2.join(); await drain(people);
+  await chair.start(APP); await drain(people);
+  assert.strictEqual(m1.view().present, 3);
+});
