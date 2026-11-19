@@ -404,7 +404,13 @@
     pendingAgain = !!again;
     const c = initTokenClient();
     if (!c) return signInTab(again);
-    c.requestAccessToken(consent ? { prompt: 'consent' } : {});
+    // The last account used here is a per-person convenience (no sheet data),
+    // so Google can skip its account chooser. Storage can be refused; that is fine.
+    let hint = '';
+    try { hint = localStorage.getItem('acr-hint') || ''; } catch (_) {}
+    const opts = consent ? { prompt: 'consent' } : {};
+    if (hint) opts.hint = hint;
+    c.requestAccessToken(opts);
   }
 
   function gotToken(token, expiresIn, again) {
@@ -429,6 +435,7 @@
   async function afterSignIn() {
     try {
       S.me = await API.getUserInfo();
+      try { if (S.me && S.me.email) localStorage.setItem('acr-hint', S.me.email); } catch (_) {}
       if (!(await checkAccess())) return;
       if (!S.session) await openSession();
       setTimeout(() => { if (!S.sv) viewLobby(); }, 2500);
