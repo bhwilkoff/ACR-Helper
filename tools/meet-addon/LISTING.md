@@ -31,9 +31,9 @@ data. Review usually takes several days, longer if Google asks for changes.
 | 1 | Home, privacy, terms, support pages on bhwilkoff.github.io | agent drafts, Ben approves the words | approved by Ben Nov 19 |
 | 2 | One Tap prompt in the panel when not signed in (Meet review rule) | agent | done, verified in Meet Nov 19 |
 | 3 | Works with third-party cookies blocked (Meet review rule) | agent tests in Chrome | to test |
-| 4 | Verify bhwilkoff.github.io in Search Console (HTML file in the bhwilkoff.github.io repo) | agent; Ben approves the push to that repo | to do |
-| 5 | Consent screen Branding: logo, home, privacy, terms, authorized domain | agent in the console | to do |
-| 6 | Data Access: declare the Sheets, email, profile, openid scopes with justification | agent | to do |
+| 4 | Verify bhwilkoff.github.io in Search Console (HTML file in the bhwilkoff.github.io repo, `tweet-archive-app/public/`) | agent | done Nov 19, verified as ben.wilkoff@minerva.edu |
+| 5 | Consent screen Branding: home, privacy, terms, authorized domain (logo left off: optional, adds review) | agent in the console | done, read back |
+| 6 | Data Access: declare the Sheets, email, profile, openid scopes | agent | done; justification goes in the verification form |
 | 7 | Demo video of the scope in use (TEST sheet only) | agent records; Ben does the Google consent clicks | to do |
 | 8 | Icons 32/48/96/128 (transparent corners), banner 220x140, screenshots 1280x800 with TEST data | agent | done: tools/meet-addon/listing/ |
 | 9 | App Configuration: Public (permanent), Individual + Admin install, deployment `acr-helper`, scopes, developer info | agent fills; Ben presses Save (visibility cannot be undone) | to do |
