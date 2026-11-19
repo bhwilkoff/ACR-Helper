@@ -34,7 +34,7 @@ data. Review usually takes several days, longer if Google asks for changes.
 | 4 | Verify bhwilkoff.github.io in Search Console (HTML file in the bhwilkoff.github.io repo, `tweet-archive-app/public/`) | agent | done Nov 19, verified as ben.wilkoff@minerva.edu |
 | 5 | Consent screen Branding: home, privacy, terms, authorized domain (logo left off: optional, adds review) | agent in the console | done, read back |
 | 6 | Data Access: declare the Sheets, email, profile, openid scopes | agent | done; justification goes in the verification form |
-| 7 | Demo video of the scope in use (TEST sheet only) | agent records; Ben does the Google consent clicks | to do |
+| 7 | Demo video of the scope in use (TEST sheet only) | agent | done: https://youtu.be/OCE8VseHeAc (unlisted), SCREENCAST.md |
 | 8 | Icons 32/48/96/128 (transparent corners), banner 220x140, screenshots 1280x800 with TEST data | agent | done: tools/meet-addon/listing/ |
 | 9 | App Configuration: Public (permanent), Individual + Admin install, deployment `acr-helper`, scopes, developer info | agent filled; Ben pressed Save Draft Nov 19 | done |
 | 10 | Store listing: name, descriptions, Teacher and Admin Tools, icons, banner, 4 screenshots, links, Free, all regions, draft testers | agent | draft saved and read back Nov 19 |
@@ -99,3 +99,25 @@ Google asks for a video showing the OAuth consent screen and each scope in use. 
   account or a group it manages, so it shows ben.wilkoff@minerva.edu.
   Ben wants no implied Minerva endorsement; changing it needs a
   non-Minerva group or account that owns the project (open).
+
+## Submission state, November 19, 2026 (afternoon)
+
+- Consent screen pushed to **In production** (Ben approved). Any Google
+  account can now sign in (unverified-app warning, 100-user cap until
+  verified); the sheet's sharing still decides what anyone sees. Testers
+  no longer need the test-user list, but until Marketplace approval they
+  still install from the Cloud console (TESTERS.md).
+- Branding: logo added (icon-128), developer contacts
+  ben.wilkoff@minerva.edu and benwilkoff@gmail.com, saved. **Verify
+  branding** ran Google's automatic check and failed only on "home page
+  URL ... is not registered to you. Verify ownership ... then wait 24
+  hours." Both https://bhwilkoff.github.io/ (HTML file) and
+  https://bhwilkoff.github.io/ACR-Helper/ (auto, parent property) are
+  verified in Search Console as ben.wilkoff@minerva.edu since about
+  12:30 on Nov 19.
+- **Next, after 12:30 on Nov 20:** Branding > Verification status >
+  View issues > "I have fixed the issues" > Proceed. Once branding
+  passes, Verification Center > Prepare for verification: the
+  `spreadsheets` justification (above) and the video link; then Ben
+  presses Submit. Then Ben presses Submit for review on the Marketplace
+  store listing (draft saved, read back).
