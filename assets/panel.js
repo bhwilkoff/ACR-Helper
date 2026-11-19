@@ -61,8 +61,11 @@
   function sendStage(view) {
     const text = JSON.stringify(view);
     if (HARNESS) { window.parent.postMessage({ to: 'stage', data: text }, location.origin); return; }
-    if (S.client && S.activity) {
-      try { S.client.notifyMainStage(text); } catch (e) { S.lastError = e.message; }
+    // Meet's answer about a running activity is not trusted; a panel opened by
+    // an activity has a stage, and notifying one that has none does no harm.
+    if (S.client) {
+      try { Promise.resolve(S.client.notifyMainStage(text)).catch(e => { S.lastError = 'stage: ' + (e.message || e); }); }
+      catch (e) { S.lastError = 'stage: ' + e.message; }
     }
   }
 
@@ -187,6 +190,19 @@
 
   function chairControls(sv, a, i) {
     let main;
+    if (S.client && !S.activity) {
+      const row = el('div', 'small-row');
+      row.append(button('Open the main stage', 'small', async () => { await openStage(); render(); }));
+      const out = [];
+      if (S.stageError) out.push(el('p', 'error', 'The main stage did not open: ' + S.stageError));
+      out.push(row);
+      return out.concat(chairControlsInner(sv, a, i));
+    }
+    return chairControlsInner(sv, a, i);
+  }
+
+  function chairControlsInner(sv, a, i) {
+    let main;
     const small = [];
     if (sv.recorded) {
       main = button('Next applicant', 'filled', () => goNextUndecided(i));
@@ -280,22 +296,29 @@
     S.rows = ACR.applicantRows(values.slice(h + 1), S.headers).map(x => ({ r: x.r, sheetRow: h + 1 + x.i }));
   }
 
+  // Opens the main stage for everyone (startActivity). Measured 2026-11-19:
+  // trusting getActivityStartingState skipped this and no stage opened.
+  async function openStage() {
+    if (!S.client) return;
+    try {
+      await S.client.startActivity({
+        mainStageUrl: new URL('stage/', location.href).href,
+        sidePanelUrl: location.href.split('?')[0],
+      });
+      S.activity = true; S.stageError = null;
+    } catch (e) {
+      const m = String((e && e.message) || e);
+      if (/ongoing/i.test(m)) { S.activity = true; S.stageError = null; return; }
+      S.activity = false;
+      S.stageError = /Policy/i.test(m) ? "The call's host settings don't allow add-on activities." : m;
+    }
+  }
+
   async function startReview(title) {
     show([el('p', 'muted', 'Loading ' + title + '…')]);
     try {
       await loadTab(title);
-      if (S.client && !S.activity) {
-        try {
-          await S.client.startActivity({
-            mainStageUrl: new URL('stage/', location.href).href,
-            sidePanelUrl: location.href.split('?')[0],
-          });
-          S.activity = true;
-        } catch (e) {
-          S.lastError = e.message;
-          if (/Policy/i.test(String(e.message))) throw new Error("The call's host settings don't allow add-on activities");
-        }
-      }
+      await openStage();
       const first = ACR.nextUndecided(S.rows.map(x => x.r), S.headers, 0);
       const ref = first < 0 ? { tab: title, sheetRow: -1, n: S.rows.length, total: S.rows.length } : applicantRef(first);
       await S.session.start(ref);
@@ -467,7 +490,6 @@
         try { const msg = JSON.parse(m.payload); if (msg.type === 'stage-ready') render(); } catch (_) {}
       });
       try { const info = await S.client.getMeetingInfo(); S.meetingCode = info.meetingCode || info.meetingId || null; } catch (_) {}
-      try { const st = await S.client.getActivityStartingState(); S.activity = !!st; } catch (_) {}
     } catch (e) {
       S.lastError = 'Meet: ' + (e.message || e);
     }
