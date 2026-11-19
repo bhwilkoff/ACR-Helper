@@ -10,7 +10,7 @@
   function clear() { token = null; }
 
   class ApiError extends Error {
-    constructor(status, message) { super(message); this.status = status; }
+    constructor(status, message, reason) { super(message); this.status = status; this.reason = reason || ''; }
   }
 
   async function call(url, opts) {
@@ -28,8 +28,14 @@
     }
     if (!res.ok) {
       let msg = 'Google said ' + res.status;
-      try { const j = await res.json(); if (j.error && j.error.message) msg = j.error.message; } catch (_) {}
-      throw new ApiError(res.status, msg);
+      let reason = '';
+      try {
+        const j = await res.json();
+        if (j.error && j.error.message) msg = j.error.message;
+        const d = (j.error && j.error.details) || [];
+        reason = (d.find(x => x && x.reason) || {}).reason || (j.error && j.error.status) || '';
+      } catch (_) {}
+      throw new ApiError(res.status, msg, reason);
     }
     return res.json();
   }

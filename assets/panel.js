@@ -79,7 +79,7 @@
   }
   function viewSignIn() {
     show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.')],
-      [button('Sign in with Google', 'filled', signIn)]);
+      [button('Sign in with Google', 'filled', () => signIn(false))]);
     sendStage({ type: 'signin' });
   }
   function viewLobby() {
@@ -308,7 +308,14 @@
     try {
       S.sheet = await API.getSpreadsheet(SID);
     } catch (e) {
-      if (e.status === 403 || e.status === 404) { viewNoAccess(); return false; }
+      const kind = ACR.refusalKind(e.status, e.reason, e.message);
+      if (kind === 'noaccess') { viewNoAccess(); return false; }
+      if (kind === 'scope') {
+        show([el('p', null, 'ACR Helper needs permission to see and edit the review spreadsheet.'),
+          el('p', 'muted', 'Sign in again and tick the Google Sheets box on Google\u2019s screen.')],
+        [button('Sign in again', 'filled', () => signIn(false, true))]);
+        return false;
+      }
       throw e;
     }
     $sub.textContent = S.sheet.title;
@@ -337,20 +344,61 @@
     setInterval(() => S.session.heartbeat().catch(() => {}), 15000);
   }
 
-  // Sign-in runs in a popup on our origin; the token comes back by postMessage
-  // and lives only in memory (REQUIREMENTS R1-R3).
-  function signIn(again) {
+  // Sign-in (REQUIREMENTS R1-R3; Ben, 2026-11-19: everything from the sidebar).
+  // Google's token client opens Google's own window straight from this press,
+  // and closes it itself; after the first Allow it finishes without asking.
+  // Google's sign-in page cannot be framed, so one Google window is the floor.
+  // If that window is refused, fall back to the sign-in tab on our origin.
+  let tokenClient = null;
+  let pendingAgain = false;
+  function initTokenClient() {
+    if (tokenClient || !window.google || !google.accounts || !google.accounts.oauth2 || !ACR_CONFIG.oauthClientId) return tokenClient;
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: ACR_CONFIG.oauthClientId,
+      scope: ACR_CONFIG.scopes,
+      prompt: '',
+      callback: r => {
+        if (r.error) return viewError('Sign-in did not finish: ' + r.error);
+        if (!google.accounts.oauth2.hasGrantedAllScopes(r, 'https://www.googleapis.com/auth/spreadsheets')) {
+          show([el('p', null, 'ACR Helper needs permission to see and edit the review spreadsheet.'),
+            el('p', 'muted', 'Sign in again and tick the Google Sheets box on Google\u2019s screen.')],
+          [button('Sign in again', 'filled', () => signIn(false, true))]);
+          return;
+        }
+        gotToken(r.access_token, Number(r.expires_in) || 3600, pendingAgain);
+      },
+      error_callback: e => {
+        if (e && e.type === 'popup_failed_to_open') return signInTab(pendingAgain);
+        if (e && e.type === 'popup_closed') return viewSignIn();
+        viewError('Sign-in did not finish: ' + ((e && (e.type || e.message)) || 'unknown'));
+      },
+    });
+    return tokenClient;
+  }
+
+  function signIn(again, consent) {
     if (!ACR_CONFIG.oauthClientId) return viewError('Google sign-in is not set up yet (needs the OAuth client ID).');
-    const popup = window.open('signin/?v=' + ACR_CONFIG.version + (again ? '&again=1' : ''), 'acr-signin');
+    pendingAgain = !!again;
+    const c = initTokenClient();
+    if (!c) return signInTab(again);
+    c.requestAccessToken(consent ? { prompt: 'consent' } : {});
+  }
+
+  function gotToken(token, expiresIn, again) {
+    API.setToken(token);
+    S.tokenExpiresAt = Date.now() + expiresIn * 1000;
+    S.expiring = false;
+    if (again && S.session) return render();
+    afterSignIn();
+  }
+
+  function signInTab(again) {
+    const popup = window.open('signin/?v=' + ACR_CONFIG.version, 'acr-signin');
     if (!popup) return viewError('The sign-in window was blocked. Allow pop-ups for Meet and try again.');
-    const onMsg = async e => {
+    const onMsg = e => {
       if (e.origin !== location.origin || e.source !== popup || !e.data || !e.data.acrToken) return;
       window.removeEventListener('message', onMsg);
-      API.setToken(e.data.acrToken);
-      S.tokenExpiresAt = Date.now() + e.data.expiresIn * 1000;
-      S.expiring = false;
-      if (again && S.session) return render();
-      await afterSignIn();
+      gotToken(e.data.acrToken, e.data.expiresIn, again);
     };
     window.addEventListener('message', onMsg);
   }

@@ -76,3 +76,11 @@ test('column letters', () => {
   assert.strictEqual(ACR.columnLetter(27), 'AB');
   assert.strictEqual(ACR.quoteTab("Rob's tab"), "'Rob''s tab'");
 });
+
+test('only a plain permission refusal means not shared', () => {
+  assert.strictEqual(ACR.refusalKind(403, 'PERMISSION_DENIED', 'The caller does not have permission'), 'noaccess');
+  assert.strictEqual(ACR.refusalKind(404, '', 'Requested entity was not found.'), 'noaccess');
+  assert.strictEqual(ACR.refusalKind(403, 'ACCESS_TOKEN_SCOPE_INSUFFICIENT', 'Request had insufficient authentication scopes.'), 'scope');
+  assert.strictEqual(ACR.refusalKind(403, 'SERVICE_DISABLED', 'Google Sheets API has not been used in project 1 before or it is disabled.'), 'api');
+  assert.strictEqual(ACR.refusalKind(500, '', 'boom'), 'other');
+});

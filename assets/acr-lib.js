@@ -147,7 +147,18 @@
     return "'" + String(t).replace(/'/g, "''") + "'";
   }
 
+  // Why Google refused a request: only a plain permission refusal means the
+  // sheet is not shared with this person.
+  function refusalKind(status, reason, message) {
+    const r = String(reason || '') + ' ' + String(message || '');
+    if (/SCOPE_INSUFFICIENT|insufficient authentication scopes/i.test(r)) return 'scope';
+    if (/SERVICE_DISABLED|has not been used|is disabled/i.test(r)) return 'api';
+    if (status === 404 || status === 403) return 'noaccess';
+    return 'other';
+  }
+
   const lib = {
+    refusalKind,
     STAGE_GROUPS, ID_COLUMN, PK_COLUMN, DECISION_COLUMN, DECISIONS, VOTES,
     isEmpty, headerKey, headerLabel, findHeaderRow, columnIndex, buildApplicant, buildLinks,
     decisionToCell, cellToDecision, decisionNote, nextUndecided, applicantRows, tally,
