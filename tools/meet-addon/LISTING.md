@@ -28,7 +28,7 @@ data. Review usually takes several days, longer if Google asks for changes.
 
 | # | Step | Who | State |
 |---|---|---|---|
-| 1 | Home, privacy, terms, support pages on bhwilkoff.github.io | agent drafts, Ben approves the words | drafted, live, awaiting Ben |
+| 1 | Home, privacy, terms, support pages on bhwilkoff.github.io | agent drafts, Ben approves the words | approved by Ben Nov 19 |
 | 2 | One Tap prompt in the panel when not signed in (Meet review rule) | agent | done, verified in Meet Nov 19 |
 | 3 | Works with third-party cookies blocked (Meet review rule) | agent tests in Chrome | to test |
 | 4 | Verify bhwilkoff.github.io in Search Console (HTML file in the bhwilkoff.github.io repo) | agent; Ben approves the push to that repo | to do |
