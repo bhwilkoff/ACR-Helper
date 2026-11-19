@@ -2,20 +2,26 @@
 
 ## Current state
 
-- **Status**: M1-M5 BUILT in mock mode and checked offline in the dev
-  harness (three TEST panels + a stage). NOTHING verified in Meet.
-- **Active milestone**: M2, blocked on Ben's setup values.
-- **Last session**: 2026-11-19, requirements, then a four-tick loop.
-- **Blocked on Ben** (REQUIREMENTS section 9): Cloud project number,
-  OAuth client ID (origin `https://bhwilkoff.github.io`), Supabase URL
-  and publishable key, GitHub Pages on, deployment JSON
-  (`tools/meet-addon/deployment.json`) installed, a logo, test copy
-  shared with the test accounts, and permission to push.
-- **Then**: put the four values in `assets/config.js`, bump `?v=`,
-  push, and Ben tests in a real call with two profiles (one with sheet
-  access, one without), on the TEST sheet only.
-- **Open questions**: REQUIREMENTS O7 (Video Recordings / Fast Review
-  Page columns).
+- **Status**: deployed to https://bhwilkoff.github.io/ACR-Helper/ (v0.2.0,
+  repo public). Google and Supabase set up. NOTHING verified in Meet yet.
+- **Active milestone**: M2-M5 real-call verification, by Ben.
+- **Setup done 2026-11-19** (agent in Ben's minerva.edu Chrome profile):
+  - Cloud project "ACR Helper", ID `acr-helper`, number 29360684398,
+    org minerva.edu. Sheets API, Workspace add-ons API, Marketplace SDK on.
+  - Consent screen: ACR Helper, External, Testing; test users
+    ben.wilkoff@minerva.edu, benwilkoff@gmail.com (Ben ticked the
+    User Data Policy box). Scopes not declared (not needed in Testing;
+    declare before verification).
+  - OAuth web client "ACR Helper web", origins
+    https://bhwilkoff.github.io and http://localhost:8080.
+  - HTTP deployment `acr-helper` (tools/meet-addon/deployment.json).
+  - Supabase: org "Minerva University Admissions", project ACR Helper,
+    ref gjnbqfcqaxfgnjodvxlr, publishable key in config. Broadcast on a
+    public channel verified from Node (two clients).
+- **Ben's next steps**: press Install on the `acr-helper` deployment;
+  then a real call on the TEST sheet: minerva.edu profile (has access,
+  chair) and the gmail profile (no access, must see the refusal).
+  Committee members must be added as test users before they can sign in.
 - **Run locally**: `python3 -m http.server 8080`, open
   `http://localhost:8080/tools/dev/` (add `?diag=1`). Tests:
   `node --test tests/*.test.js`.

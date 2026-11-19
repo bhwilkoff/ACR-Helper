@@ -254,7 +254,7 @@ for link building, crypto round trips, fit screenshots). Anything
 crossing panel and stage or reaching a second person is "built, not
 verified" until Ben sees it work in a real call.
 
-## 9. Ben's setup steps (M0)
+## 9. Setup steps (M0; done November 19, 2026 except Install, see SCRATCHPAD.md)
 
 1. Google Cloud project; enable Google Workspace Marketplace SDK, Google
    Workspace add-ons API, Google Sheets API. Send the **project number**.
