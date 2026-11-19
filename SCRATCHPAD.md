@@ -57,8 +57,23 @@
 - **Meet keeps the old panel alive**: after a push, use the add-on's
   ⋮ > Close add-on, then reopen from Activities, after the 10-minute
   cache window.
-- **Built, not yet verified**: main stage, a second person's panel and
-  stage, voting, reveal, record, the no-access refusal.
+- **Second call (myc-dbru-ynu), v0.3.2, all verified in Meet**:
+  supportsScreenSharing off removed Meet's "let those without the
+  add-on follow along" tab share; Start review + Continue opened the
+  main stage with the TEST applicant (profile, scores, FA, notes, three
+  links); vote shows "1 of 1 have voted" with the name only; Reveal
+  shows name + choice + counts on panel and stage; Record Waitlist
+  wrote `Maybe` to TEST-0004's decision cell with the note "Recorded by
+  Ben Wilkoff, Nov 19 2026 in ACR Helper" (read back from the sheet).
+  A participant without the add-on (gmail) sees no applicant data;
+  Meet tells them "The activity is not available to you."
+- **Not yet verified**: two different voters with access (needs a
+  second account that has the add-on); the in-panel no-access refusal
+  for someone who has the add-on but no sheet access; whether the
+  account hint skips Google's chooser (stored now, untested).
+- **Blocked on Ben**: committee members cannot get the add-on until it
+  has a Marketplace listing (Install covers only the developer account).
+  Profile 3f1c0f29 needs Google's "Verify it's you" sign-in.
 
 ### 2026-11-19: loop tick 4, confirm path, Go to row, sign-in, realtime
 
