@@ -36,8 +36,8 @@ data. Review usually takes several days, longer if Google asks for changes.
 | 6 | Data Access: declare the Sheets, email, profile, openid scopes | agent | done; justification goes in the verification form |
 | 7 | Demo video of the scope in use (TEST sheet only) | agent records; Ben does the Google consent clicks | to do |
 | 8 | Icons 32/48/96/128 (transparent corners), banner 220x140, screenshots 1280x800 with TEST data | agent | done: tools/meet-addon/listing/ |
-| 9 | App Configuration: Public (permanent), Individual + Admin install, deployment `acr-helper`, scopes, developer info | agent fills; Ben presses Save (visibility cannot be undone) | to do |
-| 10 | Store listing: name, descriptions, category, icons, screenshots, links, Free | agent fills; Ben approves the words | to do |
+| 9 | App Configuration: Public (permanent), Individual + Admin install, deployment `acr-helper`, scopes, developer info | agent filled; Ben pressed Save Draft Nov 19 | done |
+| 10 | Store listing: name, descriptions, Teacher and Admin Tools, icons, banner, 4 screenshots, links, Free, all regions, draft testers | agent | draft saved and read back Nov 19 |
 | 11 | Publish app (consent screen to In production) and submit verification | Ben presses | to do |
 | 12 | Publish the store listing | Ben presses | to do |
 
@@ -86,3 +86,16 @@ Google asks for a video showing the OAuth consent screen and each scope in use. 
 4. The panel opens the TEST spreadsheet (its title says TEST). Start review: the main stage shows a TEST applicant read from the sheet (that is the `spreadsheets` read).
 5. Vote, Reveal votes, pick Waitlist, Record. Then switch to the TEST spreadsheet in another tab and show the decision cell now says Maybe with the note "Recorded by ..." (that is the `spreadsheets` write).
 6. Show the hidden `_acr` tab exists (View > Hidden sheets) and say it holds the encryption key.
+
+## Measured November 19, 2026
+
+- A draft tester sees the draft listing at
+  https://workspace.google.com/marketplace/app/acr_helper/29360684398
+  with Install, but Google says: "This app hasn't been approved for Google
+  Meet yet. If you install it now, it will appear there as soon as it's
+  approved." So before approval, testers install from the Cloud console
+  (TESTERS.md), not from Meet. Draft testers get no email.
+- The consent screen's user support email can only be the signed-in
+  account or a group it manages, so it shows ben.wilkoff@minerva.edu.
+  Ben wants no implied Minerva endorsement; changing it needs a
+  non-Minerva group or account that owns the project (open).
