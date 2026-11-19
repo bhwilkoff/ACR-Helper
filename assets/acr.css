@@ -99,3 +99,9 @@ select, input { font: inherit; min-height: 36px; padding: 0 8px; border-radius: 
 .error { color: var(--reject); }
 .compact { margin: 0; }
 .compact .app-name { font-size: 18px; }
+.panel footer { flex-direction: column; flex-wrap: nowrap; }
+.small-row { display: flex; gap: 8px; }
+.btn.small { flex: 1; min-height: 32px; padding: 0 8px; }
+.vote-grid.three { grid-template-columns: repeat(3, 1fr); }
+.label { font-size: 12px; font-weight: 500; color: var(--text-2); margin: 12px 0 0; }
+.panel .counts { flex-wrap: wrap; gap: 4px 12px; }

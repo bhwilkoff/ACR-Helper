@@ -4,15 +4,17 @@
 <meta charset="utf-8">
 <title>ACR Helper dev harness (TEST data)</title>
 <style>
-  body { margin: 0; display: flex; gap: 12px; padding: 12px; background: #111; font: 12px system-ui; color: #ccc; }
+  body { margin: 0; display: flex; gap: 8px; padding: 8px; background: #111; font: 12px system-ui; color: #ccc; }
   iframe { border: 1px solid #555; background: #fff; }
-  #panel { width: 320px; height: 500px; }
+  .panel { width: 320px; height: 560px; }
   #stage { width: 805px; height: 455px; }
 </style>
 </head>
 <body>
-<div><div>panel 320x500</div><iframe id="panel"></iframe></div>
-<div><div>stage 805x455</div><iframe id="stage"></iframe></div>
+<div><div>Test Chair panel</div><iframe class="panel" id="p0"></iframe></div>
+<div><div>Test Member 1 panel</div><iframe class="panel" id="p1"></iframe></div>
+<div><div>Test Member 2 panel</div><iframe class="panel" id="p2"></iframe></div>
+<div><div id="stagelabel">stage</div><iframe id="stage"></iframe></div>
 <script src="dev.js"></script>
 </body>
 </html>

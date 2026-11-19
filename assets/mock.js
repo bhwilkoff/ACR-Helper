@@ -1,6 +1,7 @@
 // Made-up applicants for ?mock=1 and the stage harness. TEST data only: never real rows.
 window.ACR_MOCK = {
 "title": "TEST - ACR Helper fake applicants (no real data)",
+"acrKey":"VEVTVC1PTkxZLWtleS1mb3ItbW9jay1tb2RlLTAwMDE=",
 "tabs": {
 "Early Action": [
 [

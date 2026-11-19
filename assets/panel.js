@@ -1,5 +1,6 @@
-// The side panel: one per person. Reads the sheet with this person's own token
-// and tells this person's own stage what to draw.
+// The side panel: one per person. Reads the sheet with this person's own token,
+// joins the call's encrypted review session, and tells this person's own stage
+// what to draw.
 (function () {
   const params = new URLSearchParams(location.search);
   const MOCK = params.get('mock') === '1';
@@ -9,13 +10,15 @@
   const $foot = document.getElementById('foot');
   const $sub = document.getElementById('sub');
   const $diag = document.getElementById('diag');
+  const SID = ACR_CONFIG.spreadsheetId;
 
   const S = {
-    client: null, activity: false, user: null,
-    sheet: null, tab: null, sheetTabId: null, headers: [], headerRow: 0, rows: [], cur: -1,
-    role: null, lastError: null,
+    client: null, activity: false, me: null, meetingCode: null,
+    sheet: null, tab: null, sheetTabId: null, headers: [], rows: [],
+    session: null, sv: null, pick: null, confirm: null, busy: false, lastError: null,
   };
 
+  // ---------- small DOM helpers ----------
   function el(tag, cls, text) {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -25,8 +28,19 @@
   function button(text, cls, onClick) {
     const b = el('button', 'btn' + (cls ? ' ' + cls : ''), text);
     b.type = 'button';
+    b.disabled = S.busy;
     b.addEventListener('click', onClick);
     return b;
+  }
+  function linkRow(a) {
+    const links = el('div', 'links');
+    for (const l of ACR.buildLinks(a.id, a.pk)) {
+      if (!l.url) { links.append(el('span', 'link-btn bad', l.label)); continue; }
+      const link = el('a', 'link-btn', l.label);
+      link.href = l.url; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.referrerPolicy = 'no-referrer';
+      links.append(link);
+    }
+    return links;
   }
   function show(nodes, footNodes) {
     $main.replaceChildren(...nodes);
@@ -35,7 +49,7 @@
     diag();
   }
 
-  // ---- stage messages ----
+  // ---------- stage ----------
   function sendStage(view) {
     const text = JSON.stringify(view);
     if (HARNESS) { window.parent.postMessage({ to: 'stage', data: text }, location.origin); return; }
@@ -44,87 +58,204 @@
     }
   }
 
-  // ---- views ----
+  // ---------- plain views ----------
   function viewError(message) {
     S.lastError = message;
     show([el('p', 'error', 'Something went wrong: ' + message)], [button('Try again', '', boot)]);
     sendStage({ type: 'error', message });
   }
-
   function viewNoAccess() {
     show([el('p', null, "This review's spreadsheet isn't shared with you."),
       el('p', 'muted', 'Ask the committee chair to share it with your Google account.')]);
     sendStage({ type: 'noaccess' });
   }
-
   function viewSignIn() {
     show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.')],
       [button('Sign in with Google', 'filled', signIn)]);
     sendStage({ type: 'signin' });
   }
-
-  function viewPickTab() {
-    const tabs = S.sheet.tabs;
+  function viewLobby() {
     const sel = el('select');
-    sel.id = 'tab';
-    for (const t of tabs) { const o = el('option', null, t.title); o.value = t.title; sel.append(o); }
+    for (const t of S.sheet.tabs) {
+      if (t.title === '_acr') continue;
+      const o = el('option', null, t.title); o.value = t.title; sel.append(o);
+    }
     const field = el('label', 'field');
     field.append(el('span', null, 'Tab to review'), sel);
-    show([el('p', null, S.sheet.title), field,
+    show([el('p', 'muted', 'No review is running in this call yet.'), field,
       el('p', 'muted', 'Starting makes you chair: everyone who joins sees the applicant you choose.')],
       [button('Start review', 'filled', () => startReview(sel.value))]);
+    sendStage({ type: 'waiting' });
   }
 
-  function currentView() {
-    const r = S.rows[S.cur];
-    if (!r) return { type: 'done' };
-    const a = ACR.buildApplicant(S.headers, r.r);
-    return { type: 'applicant', applicant: a, tab: S.tab, position: { n: S.cur + 1, total: S.rows.length } };
+  // ---------- review ----------
+  function rowIndexOf(sheetRow) { return S.rows.findIndex(x => x.sheetRow === sheetRow); }
+
+  function stageView(sv, a) {
+    return {
+      type: 'applicant', applicant: a, tab: sv.tab, position: { n: sv.n, total: sv.total },
+      votes: { total: sv.present, voters: sv.voters, revealed: sv.revealed },
+      recorded: sv.recorded,
+    };
   }
 
-  function viewReview() {
-    const v = currentView();
-    sendStage(v);
-    if (v.type === 'done') {
-      show([el('p', null, 'Every applicant on this tab has a decision.')], chairControls());
-      return;
+  async function render() {
+    const sv = S.sv;
+    if (!sv) return viewLobby();
+    if (S.tab !== sv.tab) {
+      show([el('p', 'muted', 'Loading ' + sv.tab + '…')]);
+      try { await loadTab(sv.tab); } catch (e) { return viewError(e.message); }
+      if (S.sv !== sv) return;
     }
-    const a = v.applicant;
+    const i = rowIndexOf(sv.sheetRow);
+    if (i < 0) {
+      sendStage({ type: 'done' });
+      return show([el('p', null, 'Every applicant on this tab has a decision.')], sv.isChair ? [button('Back to the first applicant', '', () => goTo(0))] : []);
+    }
+    if (sv.recorded) {
+      const col = ACR.columnIndex(S.headers).get(ACR.headerKey(ACR.DECISION_COLUMN));
+      if (col !== undefined) setCell(i, col, ACR.decisionToCell(sv.recorded));
+    }
+    const a = ACR.buildApplicant(S.headers, S.rows[i].r);
+    sendStage(stageView(sv, a));
+    if (S.confirm) return renderConfirm(a);
+
     const head = el('div', 'compact');
-    head.append(el('h2', 'app-name', a.name || a.id), el('div', 'muted', a.id + ' · ' + v.position.n + ' of ' + v.position.total));
-    const links = el('div', 'links');
-    for (const l of ACR.buildLinks(a.id, a.pk)) {
-      if (!l.url) { links.append(el('span', 'link-btn bad', l.label)); continue; }
-      const link = el('a', 'link-btn', l.label);
-      link.href = l.url; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.referrerPolicy = 'no-referrer';
-      links.append(link);
+    head.append(el('h2', 'app-name', a.name || a.id), el('div', 'muted', a.id + ' · ' + sv.n + ' of ' + sv.total + ' · ' + sv.tab));
+    const nodes = [head, linkRow(a)];
+
+    if (sv.recorded) {
+      nodes.push(el('p', 'recorded c-' + sv.recorded, 'Recorded: ' + sv.recorded));
+    } else if (!sv.revealed) {
+      const grid = el('div', 'vote-grid');
+      for (const c of ACRSession.CHOICES) {
+        const b = el('button', 'vote-btn c-' + c, c);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(sv.myVote === c));
+        b.addEventListener('click', () => act(() => S.session.vote(c)));
+        grid.append(b);
+      }
+      nodes.push(grid);
+      nodes.push(el('p', 'muted', sv.voters.length + ' of ' + sv.present + ' have voted' + (sv.myVote ? ' · you can change your vote until Reveal' : '')));
+    } else {
+      const t = ACR.tally(sv.revealed);
+      const counts = el('div', 'counts');
+      for (const c of ACRSession.CHOICES) counts.append(el('span', 'c-' + c, c + ' ' + t[c]));
+      nodes.push(counts);
+      const row = el('div', 'voters');
+      for (const r of sv.revealed) { const chip = el('span', 'chip', r.name + ' '); chip.append(el('b', 'c-' + r.choice, r.choice)); row.append(chip); }
+      nodes.push(row);
+      if (!sv.isChair) nodes.push(el('p', 'muted', sv.chair.name + ' records the committee\'s decision.'));
     }
-    const nodes = [head, links];
-    if (a.decisionCell) nodes.push(el('p', 'muted', 'In the sheet: ' + a.decisionCell + (a.decision ? ' (' + a.decision + ')' : '')));
-    show(nodes, chairControls());
+    if (a.decisionCell && !sv.recorded) nodes.push(el('p', 'muted', 'In the sheet: ' + a.decisionCell + (a.decision ? ' (' + a.decision + ')' : '')));
+    if (!sv.isChair) nodes.push(el('p', 'muted', 'Chair: ' + sv.chair.name));
+    show(nodes.concat(sv.isChair ? chairMain(sv) : []), sv.isChair ? chairControls(sv, a, i) : []);
   }
 
-  function chairControls() {
-    if (S.role !== 'chair') return [];
-    const prev = button('Previous', '', () => go(S.cur - 1));
-    prev.disabled = S.cur <= 0;
-    const next = button('Next', '', () => go(S.cur + 1));
-    next.disabled = S.cur >= S.rows.length - 1;
-    return [prev, next];
+  function chairMain(sv) {
+    if (!sv.revealed || sv.recorded) return [];
+    S.pick = ACR.DECISIONS.includes(S.pick) ? S.pick : null;
+    const grid = el('div', 'vote-grid three');
+    for (const d of ACR.DECISIONS) {
+      const b = el('button', 'vote-btn c-' + d, d);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(S.pick === d));
+      b.addEventListener('click', () => { S.pick = d; render(); });
+      grid.append(b);
+    }
+    return [el('h3', 'label', 'Committee decision'), grid];
   }
 
-  function go(i) {
-    S.cur = Math.max(0, Math.min(S.rows.length - 1, i));
-    viewReview();
+  function chairControls(sv, a, i) {
+    let main;
+    const small = [];
+    if (sv.recorded) {
+      main = button('Next applicant', 'filled', () => goNextUndecided(i));
+    } else if (!sv.revealed) {
+      main = button('Reveal votes', 'filled', () => act(() => S.session.reveal()));
+    } else {
+      main = button(S.pick ? 'Record ' + S.pick : 'Pick the decision', 'filled', () => record(a, i));
+      main.disabled = !S.pick || S.busy;
+      small.push(button('Vote again', 'small', () => act(() => S.session.voteAgain())));
+    }
+    const prev = button('Previous', 'small', () => goTo(i - 1));
+    prev.disabled = i <= 0 || S.busy;
+    const next = button('Skip', 'small', () => goTo(i + 1));
+    next.disabled = i >= S.rows.length - 1 || S.busy;
+    small.push(prev, next);
+    const row = el('div', 'small-row');
+    row.append(...small);
+    return [main, row];
   }
 
-  // ---- data ----
+  function renderConfirm(a) {
+    const c = S.confirm;
+    show([el('p', null, 'The sheet changed since this applicant opened.'),
+      el('p', null, 'It now says: ' + (c.current || '(empty)')),
+      el('p', null, 'Replace it with ' + ACR.decisionToCell(c.decision) + ' (' + c.decision + ')?')],
+    [button('Replace', 'filled', () => { const d = S.confirm; S.confirm = null; write(d.a, d.i, d.decision); }),
+      button('Cancel', '', () => { S.confirm = null; render(); })]);
+  }
+
+  async function record(a, i) {
+    const decision = S.pick;
+    if (!decision) return;
+    const col = ACR.columnIndex(S.headers).get(ACR.headerKey(ACR.DECISION_COLUMN));
+    if (col === undefined) return viewError('This tab has no "' + ACR.DECISION_COLUMN + '" column');
+    S.busy = true; render();
+    try {
+      const current = (await API.getCell(SID, S.tab, S.rows[i].sheetRow, col)).trim();
+      S.busy = false;
+      if (current !== a.decisionCell.trim()) { S.confirm = { a, i, decision, current }; return render(); }
+      await write(a, i, decision);
+    } catch (e) { S.busy = false; viewError(e.message); }
+  }
+
+  async function write(a, i, decision) {
+    const col = ACR.columnIndex(S.headers).get(ACR.headerKey(ACR.DECISION_COLUMN));
+    S.busy = true; render();
+    try {
+      const value = ACR.decisionToCell(decision);
+      await API.writeCell(SID, S.tab, S.sheetTabId, S.rows[i].sheetRow, col, value, ACR.decisionNote(S.me.name));
+      setCell(i, col, value);
+      S.pick = null;
+      S.busy = false;
+      await S.session.recorded(decision);
+    } catch (e) { S.busy = false; viewError(e.message); }
+  }
+
+  function setCell(i, col, value) {
+    const r = S.rows[i].r;
+    while (r.length <= col) r.push('');
+    r[col] = value;
+  }
+
+  async function act(fn) {
+    try { await fn(); } catch (e) { viewError(e.message); }
+  }
+
+  function applicantRef(i) {
+    return { tab: S.tab, sheetRow: S.rows[i].sheetRow, n: i + 1, total: S.rows.length };
+  }
+
+  function goTo(i) {
+    if (i < 0 || i >= S.rows.length) return;
+    S.pick = null; S.confirm = null;
+    act(() => S.session.goTo(applicantRef(i)));
+  }
+
+  function goNextUndecided(i) {
+    const n = ACR.nextUndecided(S.rows.map(x => x.r), S.headers, i + 1);
+    if (n < 0) { S.pick = null; act(() => S.session.goTo({ tab: S.tab, sheetRow: -1, n: S.rows.length, total: S.rows.length })); return; }
+    goTo(n);
+  }
+
+  // ---------- data ----------
   async function loadTab(title) {
-    const values = await API.getValues(ACR_CONFIG.spreadsheetId, ACR.quoteTab(title));
+    const values = await API.getValues(SID, ACR.quoteTab(title));
     const h = ACR.findHeaderRow(values);
     if (h < 0) throw new Error('No "Unique ID" column on ' + title);
     S.tab = title;
-    S.headerRow = h;
     S.headers = values[h];
     S.sheetTabId = (S.sheet.tabs.find(t => t.title === title) || {}).sheetId;
     S.rows = ACR.applicantRows(values.slice(h + 1), S.headers).map(x => ({ r: x.r, sheetRow: h + 1 + x.i }));
@@ -134,7 +265,6 @@
     show([el('p', 'muted', 'Loading ' + title + '…')]);
     try {
       await loadTab(title);
-      S.role = 'chair';
       if (S.client && !S.activity) {
         try {
           await S.client.startActivity({
@@ -148,8 +278,8 @@
         }
       }
       const first = ACR.nextUndecided(S.rows.map(x => x.r), S.headers, 0);
-      S.cur = first < 0 ? S.rows.length : first;
-      viewReview();
+      const ref = first < 0 ? { tab: title, sheetRow: -1, n: S.rows.length, total: S.rows.length } : applicantRef(first);
+      await S.session.start(ref);
     } catch (e) {
       viewError(e.message);
     }
@@ -157,13 +287,33 @@
 
   async function checkAccess() {
     try {
-      S.sheet = await API.getSpreadsheet(ACR_CONFIG.spreadsheetId);
+      S.sheet = await API.getSpreadsheet(SID);
     } catch (e) {
       if (e.status === 403 || e.status === 404) { viewNoAccess(); return false; }
       throw e;
     }
     $sub.textContent = S.sheet.title;
     return true;
+  }
+
+  async function openSession() {
+    let keyB64 = await API.getAcrKey(SID);
+    if (!keyB64) {
+      keyB64 = ACRCrypto.newGroupKey();
+      try { await API.createAcrKey(SID, keyB64); } catch (e) {
+        if (e.status === 403) throw new Error('A chair with edit access must open ACR Helper first, to set up the review');
+        throw e;
+      }
+    }
+    const groupKey = await ACRCrypto.importGroupKey(keyB64);
+    const channel = await ACRCrypto.channelName(keyB64, S.meetingCode || 'no-meeting');
+    const transport = ACRTransport.make(channel, { local: HARNESS || MOCK });
+    S.session = new ACRSession.Session({
+      me: S.me, groupKey, channel, transport,
+      onChange: v => { if (S.sv && v && v.round !== S.sv.round) { S.pick = null; S.confirm = null; } S.sv = v; render(); },
+    });
+    await S.session.join();
+    setInterval(() => S.session.heartbeat().catch(() => {}), 15000);
   }
 
   async function signIn() {
@@ -173,21 +323,29 @@
   function diag() {
     if (!DIAG) return;
     $diag.hidden = false;
-    $diag.textContent = 'v' + ACR_CONFIG.version + (MOCK ? ' MOCK' : '') + ' role=' + (S.role || '-') +
-      ' activity=' + S.activity + ' tab=' + (S.tab || '-') + ' row=' + S.cur + '/' + S.rows.length +
-      (S.headers.length ? ' missing=' + ACR.buildApplicant(S.headers, []).missing.length : '') +
+    const sv = S.sv;
+    $diag.textContent = 'v' + ACR_CONFIG.version + (MOCK ? ' MOCK' : '') + ' me=' + (S.me ? S.me.name : '-') +
+      ' chair=' + (sv ? sv.isChair : '-') + ' activity=' + S.activity + ' tab=' + (S.tab || '-') +
+      ' row=' + (sv ? sv.sheetRow : '-') + ' present=' + (sv ? sv.present : '-') +
+      (S.session && S.session.lastError ? '\nsession: ' + S.session.lastError : '') +
       (S.lastError ? '\nlast error: ' + S.lastError : '');
   }
 
+  // ---------- boot ----------
   async function boot() {
     try {
       if (MOCK) {
         await loadScript('../assets/mock.js?v=' + ACR_CONFIG.version);
-        API.useMock(window.ACR_MOCK);
+        const who = params.get('as') || 'Test Chair';
+        API.useMock(window.ACR_MOCK, { name: who, email: who.toLowerCase().replace(/\W+/g, '.') + '@example.invalid' });
       }
       if (!HARNESS) await connectMeet();
       if (!MOCK) { viewSignIn(); return; }
-      if (await checkAccess()) viewPickTab();
+      S.me = await API.getUserInfo();
+      if (!(await checkAccess())) return;
+      await openSession();
+      setTimeout(() => { if (!S.sv) viewLobby(); }, 1500);
+      show([el('p', 'muted', 'Looking for a review in this call…')]);
     } catch (e) {
       viewError(e.message || String(e));
     }
@@ -207,8 +365,9 @@
       const session = await meet.addon.createAddonSession({ cloudProjectNumber: ACR_CONFIG.cloudProjectNumber });
       S.client = await session.createSidePanelClient();
       S.client.on('frameToFrameMessage', m => {
-        try { const msg = JSON.parse(m.payload); if (msg.type === 'stage-ready' && S.role) viewReview(); } catch (_) {}
+        try { const msg = JSON.parse(m.payload); if (msg.type === 'stage-ready') render(); } catch (_) {}
       });
+      try { const info = await S.client.getMeetingInfo(); S.meetingCode = info.meetingCode || info.meetingId || null; } catch (_) {}
       try { const st = await S.client.getActivityStartingState(); S.activity = !!st; } catch (_) {}
     } catch (e) {
       S.lastError = 'Meet: ' + (e.message || e);

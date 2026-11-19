@@ -30,6 +30,28 @@
 
 ## Session log
 
+### 2026-11-19: loop tick 3, voting, reveal, record in the panel
+
+- **Found**: session logic tested on a fake bus, panel not wired.
+- **Done**: panel joins the encrypted session (`assets/transport.js`:
+  BroadcastChannel in mock/harness, Supabase to come); lobby with tab
+  picker; four vote buttons; "n of m have voted"; chair Reveal, Vote
+  again, decision picker, Record (re-reads the cell first and asks to
+  confirm if it changed, R22), Next applicant (next undecided),
+  Previous, Skip; `_acr` key read or created via `api.js`; three-panel
+  dev harness with the stage of a member.
+- **Verified (offline harness only)**: full flow with three TEST
+  panels. Before reveal neither member's panel shows a tally; after
+  reveal all three and the member's stage show the same names and
+  choices; Record Waitlist wrote `Maybe` into TEST-0004's decision cell
+  (mock); Next applicant moved everyone to TEST-0005 with votes
+  cleared. Screenshots in the session scratchpad.
+- **Built, not verified**: the confirm-on-changed-cell path (not yet
+  driven), real Sheets writes and the cell note, the `_acr` tab
+  creation, anything in Meet.
+- **Left**: drive the confirm path; Go to row; Google sign-in; Supabase
+  transport.
+
 ### 2026-11-19: loop tick 2, encrypted channel and sealed votes
 
 - **Found**: M1 shells, 10 tests.

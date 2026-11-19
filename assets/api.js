@@ -3,8 +3,9 @@
   const SHEETS = 'https://sheets.googleapis.com/v4/spreadsheets/';
   let token = null;
   let mock = null;
+  let mockUser = null;
 
-  function useMock(data) { mock = JSON.parse(JSON.stringify(data)); }
+  function useMock(data, user) { mock = JSON.parse(JSON.stringify(data)); mockUser = user; }
   function setToken(t) { token = t; }
   function clear() { token = null; }
 
@@ -70,9 +71,44 @@
   }
 
   async function getUserInfo() {
-    if (mock) return { name: 'Test Chair', email: 'chair@example.invalid' };
+    if (mock) return mockUser;
     return call('https://www.googleapis.com/oauth2/v3/userinfo');
   }
 
-  window.API = { useMock, setToken, clear, getSpreadsheet, getValues, writeCell, getUserInfo, ApiError };
+  // The group key for the encrypted channel lives in the hidden _acr tab (REQUIREMENTS P5).
+  async function getAcrKey(id) {
+    if (mock) return mock.acrKey || null;
+    try {
+      const v = await getValues(id, "'_acr'!A1");
+      return (v[0] && v[0][0]) || null;
+    } catch (e) {
+      if (e.status === 400) return null;
+      throw e;
+    }
+  }
+
+  // Chair only (needs edit access). Creates the hidden tab if it is missing.
+  async function createAcrKey(id, keyB64) {
+    if (mock) { mock.acrKey = keyB64; return; }
+    const meta = await getSpreadsheet(id);
+    if (!meta.tabs.some(t => t.title === '_acr')) {
+      await call(SHEETS + encodeURIComponent(id) + ':batchUpdate', {
+        method: 'POST',
+        body: JSON.stringify({ requests: [{ addSheet: { properties: { title: '_acr', hidden: true } } }] }),
+      });
+    }
+    await call(SHEETS + encodeURIComponent(id) + '/values/' + encodeURIComponent("'_acr'!A1:B1") + '?valueInputOption=RAW', {
+      method: 'PUT',
+      body: JSON.stringify({ values: [[keyB64, 'ACR Helper channel key. Do not edit; replacing it locks out everyone in a review.']] }),
+    });
+  }
+
+  async function getCell(id, tab, rowIndex, colIndex) {
+    const a1 = ACR.quoteTab(tab) + '!' + ACR.columnLetter(colIndex) + (rowIndex + 1);
+    const v = await getValues(id, a1);
+    if (mock) { const r = v[rowIndex] || []; return r[colIndex] === undefined ? '' : String(r[colIndex]); }
+    return (v[0] && v[0][0] !== undefined) ? String(v[0][0]) : '';
+  }
+
+  window.API = { useMock, setToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, ApiError };
 })();

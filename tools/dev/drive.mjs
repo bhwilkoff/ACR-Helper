@@ -12,7 +12,7 @@ const root = new URL('../..', import.meta.url).pathname;
 const srv = spawn('python3', ['-m', 'http.server', '8766'], { cwd: root, stdio: 'ignore' });
 const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', [
   '--headless=new', '--disable-gpu', '--hide-scrollbars', '--remote-debugging-port=9333',
-  '--user-data-dir=' + out + '/profile', '--window-size=1170,600', 'about:blank'], { stdio: 'ignore' });
+  '--user-data-dir=' + out + '/profile', '--window-size=1830,600', 'about:blank'], { stdio: 'ignore' });
 const done = code => { chrome.kill(); srv.kill(); process.exit(code); };
 try {
   let targets;
