@@ -341,7 +341,7 @@
   // and lives only in memory (REQUIREMENTS R1-R3).
   function signIn(again) {
     if (!ACR_CONFIG.oauthClientId) return viewError('Google sign-in is not set up yet (needs the OAuth client ID).');
-    const popup = window.open('signin/' + (again ? '?again=1' : ''), 'acr-signin', 'width=480,height=640');
+    const popup = window.open('signin/?v=' + ACR_CONFIG.version + (again ? '&again=1' : ''), 'acr-signin', 'width=480,height=640');
     if (!popup) return viewError('The sign-in window was blocked. Allow pop-ups for Meet and try again.');
     const onMsg = async e => {
       if (e.origin !== location.origin || e.source !== popup || !e.data || !e.data.acrToken) return;
