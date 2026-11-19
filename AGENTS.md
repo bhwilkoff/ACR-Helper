@@ -30,11 +30,17 @@ So, three facts hold everything else up:
    records the decision the people made. It never decides for them
    (see "Why we build").
 
-Still open, and Ben's to answer (SCRATCHPAD.md, "Open questions"): what
-ACR stands for and who sits in the call, which spreadsheet and which
-columns, what the "other sources" are, what a decision is (the choices,
-and where it is written), and whether the add-on is for one Google
-Workspace organization or anyone. Ask; never fill these in.
+Ben, November 19, 2026, answered: ACR is the **Admissions Review
+Committee**. In a Meet call the committee works "a single applicant at a
+time and make[s a] decision about whether or not to recommend them for
+admit, waitlist, or reject". The main stage shows one applicant's row
+and links to the applicant overview, fast review, and integrity check
+pages; every member votes, hidden until the chair reveals; the chair
+records the decision. "This is a process that should be dealt with
+using the utmost privacy and confidentiality."
+
+The full requirements, privacy rules, and open questions are in
+`docs/REQUIREMENTS.md`. Its open questions are Ben's; never fill them in.
 
 ## Why we build
 

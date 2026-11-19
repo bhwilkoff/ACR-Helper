@@ -2,34 +2,21 @@
 
 ## Current state
 
-- **Status**: STARTED, nothing built. The repository holds the method
-  (AGENTS.md, skills, docs) and the Meet add-on playbook
-  (`docs/MEET-ADDON.md`); there is no add-on code yet.
-- **Active milestone**: M0, Ben says what ACR Helper is for and who uses it.
-- **Last session**: 2026-11-19, repository made from UniversalAppTemplate
-  and the Human Shaped add-on work, native-app context left out.
+- **Status**: requirements written (`docs/REQUIREMENTS.md`), Ben's
+  choices logged (DECISIONS.md 003-010); no add-on code yet.
+- **Active milestone**: M1, panel + stage shells, mock mode with fake
+  applicants, offline stage harness (REQUIREMENTS section 8).
+- **Last session**: 2026-11-19, requirements from Ben's answers; test
+  sheet `1ZCsMmoUErQurrT7SQX5yz5F_fHDAm2DiJxM-eMTcnso` made with fake rows.
 - **Next actions**:
-  1. Ask Ben the open questions below and write his answers, in his
-     words, into AGENTS.md ("What this app does").
-  2. Ben does the one-time Google setup in `docs/MEET-ADDON.md`
-     (Cloud project, Sheets API, consent screen, OAuth client,
-     deployment, Install) and sends the project number and client ID.
-  3. First prototype: a panel that signs a person in, checks the test
-     sheet with their own token, and either shows the first row or says
-     plainly that the sheet is not shared with them. Verified in a real
-     call with two profiles, one with access and one without.
-- **Open questions** (Ben's to answer):
-  1. What does ACR stand for, and who is in the call when it is used?
-  2. Which spreadsheet, which columns, and is there a test copy?
-  3. What are the "other sources" for a row?
-  4. What is a decision: its choices, and is it written back into the
-     row (needs write access) or somewhere else?
-  5. One Google Workspace organization (Internal consent, private
-     listing) or anyone with access to the sheet?
-  6. Should everyone in the call see the same row at once, and who moves
-     it? (Routes in `docs/MEET-ADDON.md`, "One row, the whole call".)
-  7. Hosting: GitHub Pages from a private repository needs a paid GitHub
-     plan; a public repository is free and holds no sheet data. Which?
+  1. Autonomous loop builds M1, then M3-M5 logic in mock mode (link
+     building, field filtering, decision mapping, encrypted channel
+     envelope, sealed votes), with unit tests and stage screenshots.
+  2. Ben does REQUIREMENTS section 9 (Cloud project, OAuth client,
+     Pages, Supabase, deployment) and sends the four non-secret values.
+  3. M2 onward verified only in a real call by Ben.
+- **Open questions**: REQUIREMENTS O7 (Video Recordings / Fast Review
+  Page columns).
 
 ---
 
