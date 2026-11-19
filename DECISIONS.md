@@ -130,3 +130,26 @@ applicants, so no real applicant is ever on screen in a test.
 
 **How to apply:** Mock mode (`?mock=1`) and the test copy use invented
 rows labeled TEST. Blocked on the column names (REQUIREMENTS O1).
+
+---
+
+## 011: Sign in with one press from the sidebar; keep no Google refresh tokens (2026-11-19)
+
+The sidebar's Sign in button starts Google's token client directly. Google's
+window appears the first time a person allows ACR Helper, and after that
+opens and closes on its own. The access token lives only in the panel's
+memory. No server keeps any Google token.
+
+**Why:** Ben, testing in Meet: "I'd much prefer for everything to be done
+inside of the sidebar rather than opening new tabs/windows." Google issues
+permission to read and write a person's sheet only through its own window
+(its pages cannot be framed) or through a server holding a refresh token.
+Ben chose the window over a stored credential that could open members'
+spreadsheets, the same rule Human Shaped keeps ("keep no Google refresh
+tokens"). Human Shaped's in-sidebar button only proves identity, which is
+not enough here.
+
+**How to apply:** never add an intermediate tab or page before Google's
+window; the sign-in tab (`addon/signin/`) is only a fallback when Google's
+window is refused. A refusal from Sheets says why (scope, API, or not
+shared) and only a plain permission refusal shows "not shared".
