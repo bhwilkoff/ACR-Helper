@@ -153,3 +153,22 @@ not enough here.
 window; the sign-in tab (`addon/signin/`) is only a fallback when Google's
 window is refused. A refusal from Sheets says why (scope, API, or not
 shared) and only a plain permission refusal shows "not shared".
+
+---
+
+## 012: A public Marketplace listing, by Ben Wilkoff (2026-11-19)
+
+ACR Helper will be listed publicly on the Google Workspace Marketplace,
+with Ben Wilkoff as the individual developer, benwilkoff@gmail.com for
+support, and its pages on bhwilkoff.github.io.
+
+**Why:** Ben chose "Public listing" over a minerva.edu-only private one,
+keeping decision 007 (any Google account the sheet is shared with). An
+HTTP deployment's Install reaches only the developer's own account;
+everyone else saw "The activity is not available to you."
+
+**How to apply:** `tools/meet-addon/LISTING.md` is the checklist. The
+listing never uses Minerva's name or logo. The Sheets scope is sensitive,
+so verification needs a demo video recorded on the TEST sheet only.
+Visibility cannot be changed once App Configuration is saved; Ben presses
+that Save and every Publish.
