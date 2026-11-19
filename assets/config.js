@@ -10,5 +10,5 @@ window.ACR_CONFIG = {
   supabaseUrl: 'https://gjnbqfcqaxfgnjodvxlr.supabase.co',
   supabaseKey: 'sb_publishable_dxhZMl5AcKpY7R4RpPeHmg_Aozw6TNO',
   scopes: 'https://www.googleapis.com/auth/spreadsheets openid email profile',
-  version: '0.2.2',
+  version: '0.2.3',
 };
