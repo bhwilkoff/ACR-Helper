@@ -38,6 +38,28 @@
 
 ## Session log
 
+### 2026-11-19: first real-call test (call bkr-rpwk-qka)
+
+- **Profiles** (by deviceId, account checked on screen): f839cfaa =
+  ben.wilkoff@minerva.edu, chair; 465d58b6 = benwilkoff@gmail.com, no
+  sheet access, admitted as a guest.
+- **Verified in Meet**: ACR Helper appears under Add-ons after Install;
+  the panel loads in Minerva colors; sign-in from the sidebar with only
+  Google's window (v0.3.0, Ben allowed with the Sheets box ticked); the
+  access check passes for the sheet's owner; the hidden `_acr` key tab
+  was created with Ben's own token; Start review opened TEST-0004, the
+  first row with an empty decision (rows 1-3 have Yes/Maybe/No).
+- **Found and fixed**: GIS started on load in a popup failed
+  (`popup_failed_to_open`); an intermediate sign-in tab plus Google's
+  window was too much for Ben (decision 011); any 403 read as "not
+  shared" (now scope / API / not shared); Start review opened no main
+  stage because the panel trusted getActivityStartingState (v0.3.1).
+- **Meet keeps the old panel alive**: after a push, use the add-on's
+  ⋮ > Close add-on, then reopen from Activities, after the 10-minute
+  cache window.
+- **Built, not yet verified**: main stage, a second person's panel and
+  stage, voting, reveal, record, the no-access refusal.
+
 ### 2026-11-19: loop tick 4, confirm path, Go to row, sign-in, realtime
 
 - **Found**: voting flow working in the harness; confirm path undriven.
