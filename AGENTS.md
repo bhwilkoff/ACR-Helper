@@ -165,7 +165,13 @@ Past about five views, add `ADDON-DESIGN.md`, seeded from
 `docs/templates/WEB-DESIGN-template.md` and the Human Shaped panel's
 rules summarized in `docs/MEET-ADDON.md`. Once created, it is binding:
 quote the rule before proposing UI work; fix the doc, then the feature.
-The panel wears Meet's own colors, type, and shapes, light and dark.
+The panel and stage wear Minerva University's brand (Ben, November 19,
+2026, `MU-BrandStandards-Jan2025.pdf`): Obsidian, White, Charcoal and the
+warm grays for surfaces, Goldenrod and Tangerine only as accents, type in
+Neue Haas Grotesk with Helvetica Neue, Helvetica, Arial as fallbacks, in
+light and dark. The Minerva logo is never redrawn, recolored, put in a
+shape, or shown under 0.65 inches, so the add-on's icon is an ACR mark
+in brand colors, not the Minerva logo.
 
 ---
 

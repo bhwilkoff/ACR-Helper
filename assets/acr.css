@@ -1,41 +1,45 @@
+/* Minerva University brand palette (MU-BrandStandards-Jan2025). */
 :root {
   --bg: #ffffff;
-  --surface: #f0f4f9;
-  --surface-2: #e9eef6;
-  --text: #1f1f1f;
-  --text-2: #444746;
-  --line: #c4c7c5;
-  --primary: #0b57d0;
+  --surface: #f2f2f2;
+  --surface-2: #f0ebe6;
+  --text: #000000;
+  --text-2: #5a5550;
+  --line: #d2cdc8;
+  --primary: #000000;
   --on-primary: #ffffff;
+  --link: #000000;
+  --accent: #f0b91e;
   --admit: #146c2e;
   --waitlist: #8a5a00;
   --reject: #b3261e;
-  --discuss: #5e5e9a;
+  --discuss: #5a5550;
   --radius: 12px;
-  --font: "Google Sans", Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font: "Neue Haas Grotesk Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #202124;
-    --surface: #2d2f31;
-    --surface-2: #35373a;
-    --text: #e8eaed;
-    --text-2: #bdc1c6;
-    --line: #5f6368;
-    --primary: #a8c7fa;
-    --on-primary: #062e6f;
+    --bg: #000000;
+    --surface: #3c3732;
+    --surface-2: #5a5550;
+    --text: #ffffff;
+    --text-2: #d2cdc8;
+    --line: #78736e;
+    --primary: #f0b91e;
+    --on-primary: #000000;
+    --link: #f0b91e;
     --admit: #6dd58c;
-    --waitlist: #f2c14e;
+    --waitlist: #f0b91e;
     --reject: #f2b8b5;
-    --discuss: #c2c1ff;
+    --discuss: #d2cdc8;
   }
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
 body { background: var(--bg); color: var(--text); font: 14px/1.4 var(--font); }
 button { font: inherit; }
-a { color: var(--primary); }
+a { color: var(--link); }
 [hidden] { display: none !important; }
 
 /* ---------- stage ---------- */
@@ -48,7 +52,7 @@ a { color: var(--primary); }
 .app-pos { margin-left: auto; color: var(--text-2); }
 .app-tab { color: var(--text-2); }
 .links { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 14px; }
-.link-btn { display: inline-flex; align-items: center; min-height: 36px; padding: 0 16px; border-radius: 18px; border: 1px solid var(--line); color: var(--primary); text-decoration: none; font-weight: 500; background: var(--bg); }
+.link-btn { display: inline-flex; align-items: center; min-height: 36px; padding: 0 16px; border-radius: 18px; border: 1px solid var(--line); color: var(--link); text-decoration: none; font-weight: 500; background: var(--bg); }
 .link-btn:hover { background: var(--surface); }
 .link-btn.bad { color: var(--reject); border-style: dashed; font-weight: 400; }
 .stage-view { container-type: inline-size; }
@@ -92,7 +96,7 @@ a { color: var(--primary); }
 .btn:disabled { opacity: .5; cursor: default; }
 .vote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
 .vote-btn { min-height: 48px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--bg); color: var(--text); font-weight: 500; cursor: pointer; }
-.vote-btn[aria-pressed="true"] { background: var(--surface-2); outline: 2px solid currentColor; }
+.vote-btn[aria-pressed="true"] { background: var(--surface-2); outline: 3px solid var(--accent); }
 .muted { color: var(--text-2); }
 .field { display: grid; gap: 4px; margin: 10px 0; }
 select, input { font: inherit; min-height: 36px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
@@ -107,3 +111,4 @@ select, input { font: inherit; min-height: 36px; padding: 0 8px; border-radius: 
 .panel .counts { flex-wrap: wrap; gap: 4px 12px; }
 .goto { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
 .goto input { width: 72px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }

@@ -283,6 +283,6 @@ Answered November 19, 2026: column names (Ben pasted the header),
 stage columns (R5), decision column and words (R21), cell note (R24),
 tab choice and order (R12, R12a).
 
-- **O7.** The "Video Recordings" and "Fast Review Page" columns: do they
-  hold links that should show beside the three built links, or are the
-  built links enough?
+- O7, answered: the Fast review and Integrity check links built from
+  the sheet (R6) appear on both the main stage and the side panel; the
+  "Video Recordings" and "Fast Review Page" columns are not shown.
