@@ -44,3 +44,45 @@ data. Review usually takes several days, longer if Google asks for changes.
 Every Google product name in the listing carries ™ (Google Meet™, Google
 Sheets™) with "is a trademark of Google LLC" (Human Shaped was rejected
 once for this). Minerva's name and logo stay out of the listing.
+
+## The words (from the pages Ben approved, November 19, 2026)
+
+**Application name:** ACR Helper
+
+**Short description** (under 200 characters):
+
+> Review one applicant at a time in Google Meet™: see their row from your committee's Google Sheets™ spreadsheet, vote privately, reveal together, and record the decision.
+
+**Detailed description:**
+
+> ACR Helper is a Google Meet™ add-on for an admissions review committee that decides on one applicant at a time, together, from a shared Google Sheets™ spreadsheet.
+>
+> What it does:
+> • Shows one applicant from the committee's spreadsheet on Meet's main stage for everyone in the call, with links to the pages a reviewer needs.
+> • Lets each member vote privately. Votes stay hidden until the chair reveals them, so each person's own judgment reaches the room first.
+> • Writes the committee's decision into the applicant's row, with a note naming who recorded it and when.
+>
+> Who can use it: only people whose own Google account can open the committee's spreadsheet. ACR Helper checks this with Google every time it opens and keeps no list of its own.
+>
+> What it never does: it never copies the spreadsheet anywhere, never stores votes, and never ranks, scores, or recommends a decision. People decide.
+>
+> Google Meet and Google Sheets are trademarks of Google LLC.
+
+**Category:** Productivity (no admissions category; "Teacher and Admin Tools" is also possible).
+
+**Links:** terms https://bhwilkoff.github.io/ACR-Helper/terms/ · privacy https://bhwilkoff.github.io/ACR-Helper/privacy/ · support https://bhwilkoff.github.io/ACR-Helper/support/
+
+**Scope justification** (verification form, for `spreadsheets`):
+
+> ACR Helper reads the rows of one spreadsheet the user's committee chooses, so each member sees the applicant under review in Google Meet; it keeps a hidden tab in that spreadsheet holding the key that encrypts messages between members' add-ons; and the chair writes the committee's decision and a note into the applicant's row. The narrower drive.file scope cannot open a spreadsheet the user did not create or pick, and spreadsheets.readonly cannot write the decision. ACR Helper opens no other spreadsheet and sends no spreadsheet data to any server.
+
+## Demo video (Ben records, about two minutes, TEST sheet only)
+
+Google asks for a video showing the OAuth consent screen and each scope in use. Record the whole screen (Shift-Command-5 on a Mac), with the browser's address bar visible, in English, then upload to YouTube as Unlisted and paste the link in the verification form.
+
+1. Show https://bhwilkoff.github.io/ACR-Helper/ and its Privacy link (2 seconds each).
+2. In a Meet call: Activities > Add-ons > ACR Helper. Press Sign in with Google.
+3. Google's window: show the app name "ACR Helper" and the permission list, with the address bar showing the client ID; tick Google Sheets; Continue.
+4. The panel opens the TEST spreadsheet (its title says TEST). Start review: the main stage shows a TEST applicant read from the sheet (that is the `spreadsheets` read).
+5. Vote, Reveal votes, pick Waitlist, Record. Then switch to the TEST spreadsheet in another tab and show the decision cell now says Maybe with the note "Recorded by ..." (that is the `spreadsheets` write).
+6. Show the hidden `_acr` tab exists (View > Hidden sheets) and say it holds the encryption key.
