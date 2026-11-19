@@ -30,6 +30,24 @@
 
 ## Session log
 
+### 2026-11-19: loop tick 2, encrypted channel and sealed votes
+
+- **Found**: M1 shells, 10 tests.
+- **Done**: `assets/acr-crypto.js` (AES-GCM group envelope bound to
+  the channel name; channel name = SHA-256 of key + meeting code;
+  ECDH P-256 sealed votes bound to session + round);
+  `assets/acr-session.js` (chair owns state, members follow; hello /
+  here / vote / state messages; presence over 45 s; reveal opens votes
+  only then; vote again and moving on clear votes; stale-round votes
+  ignored). Run tests with `node --test tests/*.test.js`.
+- **Verified (offline only)**: 21 tests pass. Mutations seen to fail:
+  plaintext envelope (3 fail), early reveal (2 fail).
+- **Built, not verified**: nothing on a real network yet; transport
+  is a fake bus. Known limit: a member's name on a vote is self-declared
+  inside the envelope, so any sheet reader could spoof a name.
+- **Left**: wire the session into the panel (BroadcastChannel transport
+  for the dev harness, Supabase later), vote UI, reveal, record.
+
 ### 2026-11-19: loop tick 1, M1 shells
 
 - **Found**: requirements committed, no code.
