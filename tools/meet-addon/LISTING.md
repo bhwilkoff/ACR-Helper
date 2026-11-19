@@ -35,7 +35,7 @@ data. Review usually takes several days, longer if Google asks for changes.
 | 5 | Consent screen Branding: logo, home, privacy, terms, authorized domain | agent in the console | to do |
 | 6 | Data Access: declare the Sheets, email, profile, openid scopes with justification | agent | to do |
 | 7 | Demo video of the scope in use (TEST sheet only) | agent records; Ben does the Google consent clicks | to do |
-| 8 | Icons 32/48/96/128 (transparent corners), banner 220x140, screenshots 1280x800 with TEST data | agent | to do |
+| 8 | Icons 32/48/96/128 (transparent corners), banner 220x140, screenshots 1280x800 with TEST data | agent | done: tools/meet-addon/listing/ |
 | 9 | App Configuration: Public (permanent), Individual + Admin install, deployment `acr-helper`, scopes, developer info | agent fills; Ben presses Save (visibility cannot be undone) | to do |
 | 10 | Store listing: name, descriptions, category, icons, screenshots, links, Free | agent fills; Ben approves the words | to do |
 | 11 | Publish app (consent screen to In production) and submit verification | Ben presses | to do |

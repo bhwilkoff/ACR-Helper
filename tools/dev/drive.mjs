@@ -12,7 +12,7 @@ const root = new URL('../..', import.meta.url).pathname;
 const srv = spawn('python3', ['-m', 'http.server', '8766'], { cwd: root, stdio: 'ignore' });
 const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', [
   '--headless=new', '--disable-gpu', '--hide-scrollbars', '--remote-debugging-port=9333',
-  '--user-data-dir=' + out + '/profile', '--window-size=1830,600', 'about:blank'], { stdio: 'ignore' });
+  '--user-data-dir=' + out + '/profile', '--window-size=' + (steps.size || '1830,600'), 'about:blank'], { stdio: 'ignore' });
 const done = code => { chrome.kill(); srv.kill(); process.exit(code); };
 try {
   let targets;
@@ -26,7 +26,11 @@ try {
   let id = 0; const pending = new Map();
   ws.addEventListener('message', e => { const m = JSON.parse(e.data); if (pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } });
   const send = (method, params = {}) => new Promise(r => { const i = ++id; pending.set(i, r); ws.send(JSON.stringify({ id: i, method, params })); });
-  await send('Page.navigate', { url: 'http://localhost:8766/tools/dev/' + (steps.query || '') });
+  if (steps.size) {
+    const [w, h] = steps.size.split(',').map(Number);
+    await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile: false });
+  }
+  await send('Page.navigate', { url: 'http://localhost:8766' + (steps.path || '/tools/dev/') + (steps.query || '') });
   await sleep(2000);
   const results = [];
   for (const [n, s] of steps.steps.entries()) {
