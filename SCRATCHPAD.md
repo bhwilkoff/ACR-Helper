@@ -72,8 +72,20 @@
   ("Signed in to Google as ben.wilkoff@minerva.edu"); Open the review
   then got the Sheets token with no visible Google window to answer, and
   the lobby appeared. Sign-in is now one press, inside the sidebar.
-- **Not yet verified**: two different voters with access (needs a
-  second account that has the add-on); the in-panel no-access refusal
+- **Two-person test, same call, verified in Meet (10:40)**: chair
+  ben.wilkoff@minerva.edu + member benwilkoff@gmail.com (tester roles,
+  test user, TEST sheet shared as viewer; see tools/meet-addon/TESTERS.md).
+  The member pressed Meet's Join activity, One Tap signed the new panel in,
+  Open the review finished with no window; the member's panel and stage
+  followed the chair to TEST-0005 over the encrypted Supabase channel
+  ("0 of 2 have voted", "Chair: Ben Wilkoff"); member voted Reject and the
+  chair saw only "1 of 2" (sealed); chair voted Admit; Reveal showed
+  Admit 1 / Reject 1 with names on both panels and both stages; Record
+  Reject wrote `No` + note to TEST-0005, and the member saw "Recorded:
+  Reject".
+- **Found**: two accounts with the same Google name look identical on
+  the vote chips (real committee names differ; noted, not fixed).
+- **Not yet verified**: the in-panel no-access refusal
   for someone who has the add-on but no sheet access; whether the
   account hint skips Google's chooser (stored now, untested).
 - **Blocked on Ben**: committee members cannot get the add-on until it
