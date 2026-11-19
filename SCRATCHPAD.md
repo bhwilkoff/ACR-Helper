@@ -30,6 +30,24 @@
 
 ## Session log
 
+### 2026-11-19: loop tick 1, M1 shells
+
+- **Found**: requirements committed, no code.
+- **Done**: `assets/acr-lib.js` (field filtering by header name with
+  NULL/blank hidden, link building with shape checks, Yes/Maybe/No
+  mapping, cell note text, next undecided); `assets/api.js` (one client,
+  mock mode); `assets/config.js` (test sheet ID live, production ID
+  parked); stage and panel pages with CSP and Meet SDK; mock TEST data;
+  `tools/stage_screens.sh`; dev harness `tools/dev/` with a DevTools
+  driver.
+- **Verified (offline only)**: 10 unit tests pass, and a mutation of
+  the NULL rule makes 2 fail. Stage fits at 560x315, 805x455, and
+  1280x720 (screenshots). In the dev harness the panel starts a review
+  on the first undecided TEST row and Previous moves the stage.
+- **Built, not verified**: anything in Meet (SDK session,
+  startActivity, notifyMainStage). Needs Ben's project number.
+- **Left**: sign-in (needs client ID), voting, realtime, record.
+
 ### 2026-11-19: repository made
 
 - **Found**: nothing; new repository.
