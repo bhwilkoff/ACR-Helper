@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+*.pem
+*.p12
+*.key
+client_secret*.json
+service-account*.json
+.claude/settings.local.json
+.claude/worktrees/
+.claude/scheduled_tasks.lock
