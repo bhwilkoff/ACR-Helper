@@ -70,7 +70,7 @@ once for this). Minerva's name and logo stay out of the listing.
 
 **Category:** Productivity (no admissions category; "Teacher and Admin Tools" is also possible).
 
-**Links:** terms https://bhwilkoff.github.io/ACR-Helper/terms/ · privacy https://bhwilkoff.github.io/ACR-Helper/privacy/ · support https://bhwilkoff.github.io/ACR-Helper/support/
+**Links:** terms https://acr.humanshaped.org/terms/ · privacy https://acr.humanshaped.org/privacy/ · support https://acr.humanshaped.org/support/
 
 **Scope justification** (verification form, for `spreadsheets`):
 

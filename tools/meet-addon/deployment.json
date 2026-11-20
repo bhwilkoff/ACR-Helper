@@ -1,15 +1,15 @@
 {
   "addOns": {
-    "common": { "name": "ACR Helper", "logoUrl": "https://bhwilkoff.github.io/ACR-Helper/assets/logo.png" },
+    "common": { "name": "ACR Helper", "logoUrl": "https://acr.humanshaped.org/assets/logo.png" },
     "meet": {
       "web": {
-        "sidePanelUrl": "https://bhwilkoff.github.io/ACR-Helper/addon/",
+        "sidePanelUrl": "https://acr.humanshaped.org/addon/",
         "supportsScreenSharing": false,
-        "addOnOrigins": ["https://bhwilkoff.github.io"],
-        "logoUrl": "https://bhwilkoff.github.io/ACR-Helper/assets/logo.png",
-        "darkModeLogoUrl": "https://bhwilkoff.github.io/ACR-Helper/assets/logo-dark.png"
+        "addOnOrigins": ["https://acr.humanshaped.org"],
+        "logoUrl": "https://acr.humanshaped.org/assets/logo.png",
+        "darkModeLogoUrl": "https://acr.humanshaped.org/assets/logo-dark.png"
       },
-      "termsUri": "https://bhwilkoff.github.io/ACR-Helper/terms/"
+      "termsUri": "https://acr.humanshaped.org/terms/"
     }
   }
 }
