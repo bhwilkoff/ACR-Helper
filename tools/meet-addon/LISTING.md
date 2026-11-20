@@ -121,3 +121,22 @@ Google asks for a video showing the OAuth consent screen and each scope in use. 
   `spreadsheets` justification (above) and the video link; then Ben
   presses Submit. Then Ben presses Submit for review on the Marketplace
   store listing (draft saved, read back).
+
+## Branding re-check, November 20, 2026, 12:50 MST
+
+- In the ben.wilkoff@minerva.edu profile: Branding > Verification status >
+  View issues > "I have fixed the issues" > Proceed. Google logged "Verify
+  branding information" as done; the status is unchanged and the issue is
+  the same: home page URL "https://bhwilkoff.github.io/ACR-Helper/" "is
+  not registered to you."
+- Search Console, same account: "You are a verified owner" of
+  https://bhwilkoff.github.io/ (HTML file), so this is not the 24-hour wait.
+  Developer forum threads report the same failure on github.io and
+  vercel.app hosts despite verification.
+- Verification Center: "You need to verify and publish your branding
+  before you can request for verification." Prepare for verification is
+  locked; nothing filled, nothing submitted.
+- Options (Ben decides): (1) "I believe the issues found are incorrect"
+  (asks Google for human review; may take days); (2) put the home,
+  privacy, and terms pages on a domain Ben owns, verify it in Search
+  Console by DNS, update Branding and the authorized domain, re-check.
