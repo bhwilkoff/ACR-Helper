@@ -172,3 +172,23 @@ listing never uses Minerva's name or logo. The Sheets scope is sensitive,
 so verification needs a demo video recorded on the TEST sheet only.
 Visibility cannot be changed once App Configuration is saved; Ben presses
 that Save and every Publish.
+
+---
+
+## 013: The add-on lives at acr.humanshaped.org (2026-11-20)
+
+The add-on, its home, privacy, terms, and support pages are served from
+https://acr.humanshaped.org/ (GitHub Pages custom domain), not from
+bhwilkoff.github.io.
+
+**Why:** Google's branding check rejected the github.io home page twice
+("not registered to you") although Search Console showed
+ben.wilkoff@minerva.edu as verified owner; a shared host suffix does not
+pass. Ben owns humanshaped.org and chose it; it keeps Minerva's name out of
+the product (decision 012).
+
+**How to apply:** the domain's Search Console Domain property is verified
+by a TXT record at WordPress.com DNS for ben.wilkoff@minerva.edu (the
+project owner); never delete it. Any new URL goes on acr.humanshaped.org,
+in `tools/meet-addon/deployment.json`, the OAuth client origins, Branding,
+and the store listing together.

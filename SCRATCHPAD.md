@@ -2,20 +2,15 @@
 
 ## Current state
 
-- **Status (2026-11-20)**: v0.5.0 live at https://bhwilkoff.github.io/ACR-Helper/.
+- **Status (2026-11-20)**: v0.5.0 live at https://acr.humanshaped.org/.
   Verified in real Meet calls: sign-in in the sidebar, two-person sealed
   votes, reveal, record, notes, country flag, Intended Concentration.
   Not yet verified: note-taker handoff to a second person.
-- **Submission**: consent screen In production; video
-  https://youtu.be/OCE8VseHeAc; Marketplace store listing draft saved.
-  **Blocked on branding**: the re-check on Nov 20 12:50 (more than 24 h
-  after Search Console verification) failed again with the same issue:
-  "The website of your home page URL "https://bhwilkoff.github.io/ACR-Helper/"
-  is not registered to you." Search Console still shows
-  ben.wilkoff@minerva.edu as verified owner of https://bhwilkoff.github.io/.
-  Prepare for verification stays locked until branding passes. Ben's call:
-  request human review, or move the home page to a domain he owns
-  (DNS-verified). See tools/meet-addon/LISTING.md.
+- **Submission (Nov 20, afternoon)**: moved to https://acr.humanshaped.org/
+  (decision 013). Branding verified and published. Verification form
+  filled (justification + video) and Marketplace listing saved; both
+  Submit buttons are Ben's (LISTING.md, last section).
+  Not verified in a real call on the new domain yet.
 - **Run locally**: `python3 -m http.server 8080`, open
   `http://localhost:8080/tools/dev/` (add `?diag=1`). Tests:
   `node --test tests/*.test.js`.

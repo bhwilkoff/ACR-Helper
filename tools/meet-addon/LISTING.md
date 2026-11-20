@@ -12,8 +12,8 @@ the spreadsheet's sharing; a listing only lets people install it.
 
 - Developer: **Ben Wilkoff**, individual. Non-trader.
 - Support and developer email: **benwilkoff@gmail.com**.
-- Pages and authorized domain: **bhwilkoff.github.io** (home page
-  https://bhwilkoff.github.io/ACR-Helper/).
+- Pages and authorized domain: **humanshaped.org** (home page
+  https://acr.humanshaped.org/, since Nov 20; was bhwilkoff.github.io).
 
 ## What is harder than Human Shaped
 
@@ -80,7 +80,7 @@ once for this). Minerva's name and logo stay out of the listing.
 
 Google asks for a video showing the OAuth consent screen and each scope in use. Record the whole screen (Shift-Command-5 on a Mac), with the browser's address bar visible, in English, then upload to YouTube as Unlisted and paste the link in the verification form.
 
-1. Show https://bhwilkoff.github.io/ACR-Helper/ and its Privacy link (2 seconds each).
+1. Show https://acr.humanshaped.org/ and its Privacy link (2 seconds each).
 2. In a Meet call: Activities > Add-ons > ACR Helper. Press Sign in with Google.
 3. Google's window: show the app name "ACR Helper" and the permission list, with the address bar showing the client ID; tick Google Sheets; Continue.
 4. The panel opens the TEST spreadsheet (its title says TEST). Start review: the main stage shows a TEST applicant read from the sheet (that is the `spreadsheets` read).
@@ -140,3 +140,39 @@ Google asks for a video showing the OAuth consent screen and each scope in use. 
   (asks Google for human review; may take days); (2) put the home,
   privacy, and terms pages on a domain Ben owns, verify it in Search
   Console by DNS, update Branding and the authorized domain, re-check.
+
+## Moved to acr.humanshaped.org, November 20, 2026 (afternoon)
+
+Ben: "Either humanshaped.org or learningischange.com would be the most
+logical to use." Done in the ben.wilkoff@minerva.edu profile, each read back:
+
+- WordPress.com DNS for humanshaped.org: CNAME `acr` -> bhwilkoff.github.io;
+  TXT `@` google-site-verification=_l-BzsB0... (Search Console token for
+  ben.wilkoff@minerva.edu; the two older TXT tokens belong to the gmail
+  account and are untouched).
+- Search Console: Domain property humanshaped.org verified ("Ownership
+  auto verified") as ben.wilkoff@minerva.edu. Keep the TXT record.
+- GitHub Pages custom domain acr.humanshaped.org, certificate approved,
+  HTTPS enforced. Old github.io URLs 301 to the new domain.
+- OAuth client origins: https://acr.humanshaped.org and
+  http://localhost:8080 (github.io removed).
+- Meet deployment `acr-helper`: every URL and addOnOrigins now
+  acr.humanshaped.org ("Changes saved successfully").
+- Branding: home, privacy, terms on acr.humanshaped.org; authorized
+  domains humanshaped.org and bhwilkoff.github.io (left in place: editing
+  Branding again could reset its verification). **Branding verified and
+  published** ("Your branding has been verified and is being shown to users").
+- Data Access: `spreadsheets` justification (552 chars, above) and
+  https://youtu.be/OCE8VseHeAc saved; the Prepare for verification summary
+  reads both back.
+- Marketplace store listing: terms, privacy, support, and draft-tester
+  opt-out URLs on acr.humanshaped.org; Save Draft, read back after reload.
+
+**Ready for Ben** (not pressed by the agent):
+1. Verification Center > Prepare for verification > **Confirm**
+   (Additional info is optional and empty).
+2. Marketplace SDK > Store Listing > **SUBMIT FOR REVIEW**.
+
+Not yet verified in a real Meet call on the new domain (sign-in from the
+new origin; Google says client changes take 5 minutes to a few hours).
+The demo video's consent window shows bhwilkoff.github.io, the old origin.
