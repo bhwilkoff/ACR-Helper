@@ -176,3 +176,16 @@ logical to use." Done in the ben.wilkoff@minerva.edu profile, each read back:
 Not yet verified in a real Meet call on the new domain (sign-in from the
 new origin; Google says client changes take 5 minutes to a few hours).
 The demo video's consent window shows bhwilkoff.github.io, the old origin.
+
+## Submitted by Ben, November 21, 2026
+
+Read back in the console:
+- Verification Center: "Your app's data access is under review." Branding
+  verified and shown. Additional info carried an 867-character note
+  (Meet add-on, sheet-sharing access model, encryption, the move from
+  bhwilkoff.github.io to acr.humanshaped.org with the same client ID).
+- Marketplace Store Listing: "The draft is in review and can't be edited."
+  Draft testers unchanged.
+
+Next: wait for Google's emails (to ben.wilkoff@minerva.edu and
+benwilkoff@gmail.com). Run a real Meet call on acr.humanshaped.org.

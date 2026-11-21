@@ -6,11 +6,10 @@
   Verified in real Meet calls: sign-in in the sidebar, two-person sealed
   votes, reveal, record, notes, country flag, Intended Concentration.
   Not yet verified: note-taker handoff to a second person.
-- **Submission (Nov 20, afternoon)**: moved to https://acr.humanshaped.org/
-  (decision 013). Branding verified and published. Verification form
-  filled (justification + video) and Marketplace listing saved; both
-  Submit buttons are Ben's (LISTING.md, last section).
-  Not verified in a real call on the new domain yet.
+- **Submission (Nov 21)**: Ben submitted both. OAuth data access "under
+  review"; Marketplace listing "in review". Served from
+  https://acr.humanshaped.org/ (decision 013). Not yet verified in a real
+  Meet call on the new domain.
 - **Run locally**: `python3 -m http.server 8080`, open
   `http://localhost:8080/tools/dev/` (add `?diag=1`). Tests:
   `node --test tests/*.test.js`.
