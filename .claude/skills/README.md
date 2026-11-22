@@ -36,3 +36,4 @@ needed.
 | `web-content-extraction` | Use when an app needs to fetch and render THIRD-PARTY page content the app doesn't control — a reader mode, article extraction, OG/link-preview cards — from a static-hosted web app (CORS wall) or a native app (no CORS, d |
 | `web-platform-patterns` | Use before any web (vanilla HTML/CSS/JS, no build step, static hosting) UI / routing / data / offline / image work. |
 | `zero-cost-hosted-backend` | Use when an app needs SHARED user data — accounts, public profiles, cross-user features (shared collections, moderation, matching, social rows) — the case per-ecosystem-sync-islands explicitly does not cover. |
+| `secrets-without-bookkeeping` | Use when any key, token, password, or client secret is involved: eliminate it, else one home, never in git or cleartext. |

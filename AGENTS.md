@@ -98,6 +98,7 @@ mechanism, open `.claude/skills/<name>/SKILL.md` and follow it.
 | A stable ID for each row, or matching a row to another source | `canonical-entity-identity` |
 | Deciding what another source may say about a row (provenance, wrong matches, stale data) | `evidence-gated-catalog-curation` |
 | Adding a third-party data source, or one is withdrawn | `third-party-revocation-resilience` |
+| ANY key, token, password, or client secret | `secrets-without-bookkeeping` |
 | Reading a web page as a source for a row | `web-content-extraction` |
 | Figures from someone else's listings or data, shown honestly | `provenance-honest-market-data` |
 | A second client reads the same data | `shared-data-plane-contract` |
@@ -126,7 +127,7 @@ Read `docs/platforms/web.md` before any web work, and
   in DECISIONS.md.
 - **Version every script and stylesheet** (`?v=`) and bump it on every
   change: Meet caches the pages for 10 minutes.
-- **Secrets never in git**, and never in cleartext on disk. A Cloud
+- **Secrets never in git**, and never in cleartext on disk. *Check: `tools/test_no_secrets.py`.* A Cloud
   project number and an OAuth client ID are not secrets; a client
   secret or a key is.
 
