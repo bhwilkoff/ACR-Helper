@@ -90,38 +90,22 @@
     [button('Choose the spreadsheet', 'filled', openPicker)]);
     sendStage({ type: 'signin' });
   }
-  async function openPicker() {
-    try {
-      if (!window.gapi) await loadScript('https://apis.google.com/js/api.js');
-      if (!(window.google && google.picker)) await new Promise((res, rej) => gapi.load('picker', { callback: res, onerror: () => rej(new Error('Could not load Google\u2019s file picker')) }));
-    } catch (e) { return viewError(e.message); }
-    const view = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
-      .setFileIds(SID).setMode(google.picker.DocsViewMode.LIST);
-    const w = Math.max(280, Math.min(1051, window.innerWidth - 8));
-    const h = Math.max(300, Math.min(650, window.innerHeight - 8));
-    new google.picker.PickerBuilder()
-      .setAppId(ACR_CONFIG.cloudProjectNumber)
-      .setOAuthToken(API.getToken())
-      .addView(view)
-      .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
-      .enableFeature(google.picker.Feature.NAV_HIDDEN)
-      .setSize(w, h)
-      .setOrigin(topOrigin())
-      .setCallback(d => {
-        if (d.action === google.picker.Action.PICKED) {
-          S.picked = true;
-          afterSignIn();
-        } else if (d.action === google.picker.Action.CANCEL) {
-          viewPick();
-        }
-      })
-      .build().setVisible(true);
-  }
-  // Inside Meet the panel is a nested frame; the Picker stays blank unless told
-  // the top page's origin (measured in Meet 2026-11-23).
-  function topOrigin() {
-    const a = location.ancestorOrigins;
-    return (a && a.length) ? a[a.length - 1] : location.origin;
+  function openPicker() {
+    const w = window.open(new URL('pick/?v=' + ACR_CONFIG.version, location.href).href, 'acr-pick', 'popup,width=760,height=560');
+    if (!w) return viewError('The file picker window was blocked. Allow pop-ups for Meet and try again.');
+    let done = false;
+    const onMsg = e => {
+      if (e.origin !== location.origin || e.source !== w || !e.data || !e.data.acrPick) return;
+      const m = e.data.acrPick;
+      if (m === 'ready') { w.postMessage({ acrPickToken: API.getToken() }, location.origin); return; }
+      if (done) return;
+      done = true;
+      window.removeEventListener('message', onMsg);
+      if (m === 'picked') { S.picked = true; afterSignIn(); } else viewPick();
+    };
+    window.addEventListener('message', onMsg);
+    show([el('p', 'muted', 'Choose the spreadsheet in the window that opened.')],
+      [button('Open it again', '', openPicker)]);
   }
   function viewNoAccess() {
     show([el('p', null, "This review's spreadsheet isn't shared with you."),
@@ -664,6 +648,6 @@
     }
   }
 
-  window.ACR_PANEL = { S };
+  window.ACR_PANEL = { S, openPicker };
   boot();
 })();

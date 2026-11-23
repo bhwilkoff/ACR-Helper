@@ -212,3 +212,7 @@ means "not shared". The Picker lists the sheet only if it is shared with the
 person, so the sheet's sharing is still the access list. Request tokens with
 `include_granted_scopes: false` so an old `spreadsheets` grant never hides a
 missing drive.file grant. Never add a broader Drive or Sheets scope back.
+The Picker runs in a top-level window on our origin (`addon/pick/`), not in
+the panel: inside Meet's nested frames it opened but listed no file and
+sized itself to 150px (measured Nov 23), with or without `setOrigin`. It is
+one extra window, once per person.

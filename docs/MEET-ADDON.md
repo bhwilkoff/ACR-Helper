@@ -114,7 +114,8 @@ that needs no server:
 Scopes: `drive.file` with a one-time Google Picker pre-pointed at the
 sheet (`setFileIds`). Google's verification refused `spreadsheets` on
 November 23, 2026 (DECISIONS.md 014). The pick persists: later tokens open
-the sheet with no picker (measured).
+the sheet with no picker (measured). The Picker must run in a top-level
+window (`addon/pick/`): inside Meet's frames it lists no file.
 
 ## One row, the whole call (proposed; Ben chooses)
 
