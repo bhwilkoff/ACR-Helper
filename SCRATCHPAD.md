@@ -12,8 +12,10 @@
   one-time Picker window (decision 014); console Data Access changed and
   the Verification Center now says verification is not required. Privacy
   policy has "How sensitive data is protected". **Waiting on Ben**: send
-  the Gmail draft (ben.wilkoff@minerva.edu, Google's thread; includes the
-  new video youtu.be/hFSTPAD5ikQ and reviewer steps). Listing scopes fixed
+  the Gmail draft (ben.wilkoff@minerva.edu, Google's thread; new video
+  youtu.be/ruo5K9UMRr8, reviewer steps, why no One Tap). v0.8.1 verified in
+  Meet (call kdv-pszn-pce): one button, one Google window, Picker opened by
+  itself in the side panel, lobby; returning users no window. Listing scopes fixed
   and resubmitted Nov 23. ACR Helper grants removed from both Ben accounts
   for the video: each sees consent (and gmail the picker) next time.
 - **Run locally**: `python3 -m http.server 8080`, open

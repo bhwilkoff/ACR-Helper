@@ -1,7 +1,8 @@
 # Review video (drive.file), 2026-11-23
 
-**Uploaded:** youtu.be/hFSTPAD5ikQ, Unlisted, "ACR Helper: Google Meet add-on,
-OAuth review (drive.file)", on Ben's channel (benwilkoff@gmail.com), 3:24.
+**Uploaded:** youtu.be/ruo5K9UMRr8 (v0.8.1: one button, one Google window,
+Picker in the side panel), Unlisted, 3:16, on Ben's channel
+(benwilkoff@gmail.com). Superseded: youtu.be/hFSTPAD5ikQ (v0.6.2, pick window).
 Built with `screencast/build.sh <clips> <work>` from eight window clips
 (s1-signin, s1b-confirm, s2-openreview, s3-consent, s4-choose, s5-pick,
 s6-review, s7-sheet) and cards 01-08 (`cards.json`, `make.py`). Call
@@ -12,7 +13,8 @@ How to reset so the consent screen and the picker appear on camera:
   from Drive. This one step removes the sheet choice **and** the approval.
   Do it while ACR Helper still has access: after myaccount "Delete all" the
   app leaves Drive's list but the sheet choice survives (measured Nov 23).
-- Start recording a pop-up window ~2.5 s after it appears; starting at once
+- Start recording a pop-up window ~2.5 s after it appears, and wait ~3 s after
+  stopping one recording before starting the next; overlapping streams
   crashed the recorder ("connection being interrupted").
 - Compile the recorder with `swiftc -O -parse-as-library`.
 - Picker rows cannot be selected through Accessibility; a person clicks.
