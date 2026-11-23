@@ -7,6 +7,7 @@
 
   function useMock(data, user) { mock = JSON.parse(JSON.stringify(data)); mockUser = user; }
   function setToken(t) { token = t; }
+  function getToken() { return token; }
   function clear() { token = null; }
 
   class ApiError extends Error {
@@ -121,5 +122,5 @@
     mock.tabs[tab][rowIndex][colIndex] = value;
   }
 
-  window.API = { mockSet, useMock, setToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, ApiError };
+  window.API = { mockSet, useMock, setToken, getToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, ApiError };
 })();

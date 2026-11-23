@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>drive.file probe (TEST sheet)</title>
+<style>body{font:14px system-ui;margin:16px;max-width:320px}button{display:block;margin:6px 0;padding:6px 10px}pre{white-space:pre-wrap;font-size:12px;background:#eee;padding:8px}</style>
+</head>
+<body>
+<p>Measures: with only drive.file, does the Sheets API refuse the TEST sheet until it is picked, and open it after?</p>
+<button id="tok">1. Token (drive.file)</button>
+<button id="get">2. spreadsheets.get</button>
+<button id="pick">3. Picker on the TEST sheet</button>
+<button id="write">4. Write _acr probe? (read only: values.get)</button>
+<pre id="log"></pre>
+<script src="../../assets/config.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+<script>
+const SID = ACR_CONFIG.spreadsheetId;
+const log = (...a) => { document.getElementById('log').textContent += a.map(x => typeof x === 'string' ? x : JSON.stringify(x)).join(' ') + '\n'; };
+let token = null;
+const client = google.accounts.oauth2.initTokenClient({
+  client_id: ACR_CONFIG.oauthClientId,
+  scope: 'https://www.googleapis.com/auth/drive.file openid email profile',
+  callback: r => { token = r.access_token; log('token scopes:', r.scope, r.error || ''); },
+  error_callback: e => log('token error', e.type || e.message),
+});
+document.getElementById('tok').onclick = () => client.requestAccessToken();
+async function get(path) {
+  const res = await fetch('https://sheets.googleapis.com/v4/spreadsheets/' + SID + path, { headers: { Authorization: 'Bearer ' + token } });
+  log(path || 'get', res.status, (await res.text()).slice(0, 300));
+}
+document.getElementById('get').onclick = () => get('?fields=properties.title');
+document.getElementById('write').onclick = () => get("/values/'_acr'!A1");
+document.getElementById('pick').onclick = () => gapi.load('picker', () => {
+  const view = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setFileIds(SID).setMode(google.picker.DocsViewMode.LIST);
+  const p = new google.picker.PickerBuilder()
+    .setAppId(ACR_CONFIG.cloudProjectNumber)
+    .setOAuthToken(token)
+    .addView(view)
+    .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
+    .setCallback(d => log('picker', d.action, (d.docs || []).map(x => x.id)))
+    .build();
+  p.setVisible(true);
+});
+</script>
+</body>
+</html>

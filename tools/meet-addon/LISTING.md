@@ -15,6 +15,8 @@ the spreadsheet's sharing; a listing only lets people install it.
 - Pages and authorized domain: **humanshaped.org** (home page
   https://acr.humanshaped.org/, since Nov 20; was bhwilkoff.github.io).
 
+**Nov 23, 2026:** Google refused `spreadsheets`; v0.6.0 uses `drive.file` + a one-time Picker (DECISIONS.md 014, VERIFICATION-REPLY.md). The scope justification below is superseded.
+
 ## What is harder than Human Shaped
 
 Human Shaped asked only for name and email, so Google did a light brand

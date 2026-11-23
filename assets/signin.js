@@ -13,6 +13,7 @@ window.ACRSignIn = {
     const client = google.accounts.oauth2.initTokenClient({
       client_id: ACR_CONFIG.oauthClientId,
       scope: ACR_CONFIG.scopes,
+      include_granted_scopes: false,
       prompt: '',
       callback: r => {
         if (r.error) { show('Sign-in did not finish: ' + r.error); return; }

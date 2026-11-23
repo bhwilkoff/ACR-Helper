@@ -192,3 +192,23 @@ by a TXT record at WordPress.com DNS for ben.wilkoff@minerva.edu (the
 project owner); never delete it. Any new URL goes on acr.humanshaped.org,
 in `tools/meet-addon/deployment.json`, the OAuth client origins, Branding,
 and the store listing together.
+
+## 014: drive.file and a one-time Google Picker, not the spreadsheets scope (2026-11-23)
+
+ACR Helper asks only for `drive.file`, `openid`, `email`, `profile`. Each
+person chooses the committee's sheet once in Google's Picker, pre-pointed at
+it with `setFileIds`; after that the token opens that sheet and nothing else.
+
+**Why:** Google's verification review (Nov 23) refused `spreadsheets` under
+the minimum-scope rule and named drive.file + Picker as the fix; UI
+preference is not an accepted exception. drive.file is non-sensitive, so no
+video, CASA, or yearly review. Measured Nov 23: a drive.file-only token got
+404 on the TEST sheet before the pick and 200 after (hidden `_acr` tab too),
+the grant survived a new token, and the Picker ran without an API key.
+
+**How to apply:** an unpicked sheet and an unshared sheet both read as 404,
+so the first 404 shows "Choose the spreadsheet"; only a 404 after a pick
+means "not shared". The Picker lists the sheet only if it is shared with the
+person, so the sheet's sharing is still the access list. Request tokens with
+`include_granted_scopes: false` so an old `spreadsheets` grant never hides a
+missing drive.file grant. Never add a broader Drive or Sheets scope back.

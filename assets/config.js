@@ -9,6 +9,6 @@ window.ACR_CONFIG = {
   productionSpreadsheetId: '1uiUPxkNHcAAfTWS-9y6XSbbxnpQWyJv3ZCO3Ew7vc6I',
   supabaseUrl: 'https://gjnbqfcqaxfgnjodvxlr.supabase.co',
   supabaseKey: 'sb_publishable_dxhZMl5AcKpY7R4RpPeHmg_Aozw6TNO',
-  scopes: 'https://www.googleapis.com/auth/spreadsheets openid email profile',
-  version: '0.5.0',
+  scopes: 'https://www.googleapis.com/auth/drive.file openid email profile',
+  version: '0.6.0',
 };

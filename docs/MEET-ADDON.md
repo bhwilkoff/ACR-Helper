@@ -111,10 +111,10 @@ that needs no server:
    So a person without access who joins the activity sees a stage that
    says the sheet is not shared with them, never the rows.
 
-Scopes: `spreadsheets.readonly` if decisions are written elsewhere;
-`spreadsheets` if the add-on writes each decision into the row. `drive.file`
-cannot open a sheet the person did not create or pick, unless the add-on
-uses the Google Picker, which needs a press each time.
+Scopes: `drive.file` with a one-time Google Picker pre-pointed at the
+sheet (`setFileIds`). Google's verification refused `spreadsheets` on
+November 23, 2026 (DECISIONS.md 014). The pick persists: later tokens open
+the sheet with no picker (measured).
 
 ## One row, the whole call (proposed; Ben chooses)
 

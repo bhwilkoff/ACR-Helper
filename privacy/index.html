@@ -13,12 +13,12 @@
 <nav><a href="../privacy/">Privacy</a><a href="../terms/">Terms</a><a href="../support/">Support</a></nav></header>
 <main class="doc">
 <h1>Privacy policy</h1>
-<p class="muted">Last updated November 19, 2026.</p>
+<p class="muted">Last updated November 23, 2026.</p>
 <p>ACR Helper is a Google Meet&trade; add-on made by Ben Wilkoff. This page says what it reads, what it writes, and where information goes.</p>
 <h2>What ACR Helper asks Google for</h2>
 <ul>
 <li><strong>Your name and email address</strong> (the <code>openid</code>, <code>email</code>, and <code>profile</code> permissions), to show the committee who has voted and to name the person who recorded a decision.</li>
-<li><strong>Access to your Google Sheets&trade; spreadsheets</strong> (the <code>spreadsheets</code> permission), used only on the committee's own spreadsheet: to check that you can open it, to read its rows, to keep a hidden tab in it holding the key that encrypts the call's messages, and, for the chair, to write the committee's decision and a note into the applicant's row. ACR Helper does not open, read, or change any other spreadsheet.</li>
+<li><strong>Access to only the files you choose for it</strong> (the <code>drive.file</code> permission). The first time you open ACR Helper, Google's own file picker asks you to choose the committee's spreadsheet; ACR Helper can open that spreadsheet and nothing else in your Google Drive&trade;. It uses it to check that you can open it, to read its rows, to keep a hidden tab in it holding the key that encrypts the call's messages, and, for the chair, to write the committee's decision and a note into the applicant's row.</li>
 </ul>
 <h2>Where spreadsheet information goes</h2>
 <ul>
@@ -30,6 +30,18 @@
 <p>To keep everyone on the same applicant and to collect votes, add-ons in the same call send each other short messages through Supabase Realtime, a message relay. Every message is encrypted in your browser before it leaves, with a key that only people who can open the spreadsheet can read; the relay sees only scrambled data and stores nothing. Votes are sealed so that only the chair's add-on can open them, and only when the chair reveals them. Votes are never stored anywhere.</p>
 <h2>What is kept in your browser</h2>
 <p>Only the email address you last signed in with, so Google can skip asking which account to use. Nothing from the spreadsheet is kept.</p>
+<h2>How sensitive data is protected</h2>
+<p>Applicant information in the spreadsheet is sensitive. ACR Helper protects it in these ways:</p>
+<ul>
+<li><strong>No copies.</strong> ACR Helper runs no server and no database of its own. Spreadsheet data is never stored, logged, cached, or backed up by ACR Helper; it exists only on your screen while the add-on is open, and is gone when you close it.</li>
+<li><strong>Encryption in transit.</strong> Every connection, to Google's servers and to the message relay, uses HTTPS or secure WebSockets (TLS). Messages between add-ons are also encrypted end to end in your browser with AES-256-GCM before they are sent, so the relay cannot read them. Votes are additionally sealed with an elliptic-curve key (ECDH P-256) so that only the chair's add-on can open them, and only on reveal.</li>
+<li><strong>Access control by Google.</strong> Every read and write is made with your own Google permission, and Google checks the spreadsheet's sharing on every request. ACR Helper keeps no list of who is allowed in; being removed from the spreadsheet removes access the next time the add-on opens.</li>
+<li><strong>Least access.</strong> ACR Helper can open only the spreadsheet you choose for it in Google's own file picker, and no other file in your Google Drive&trade;.</li>
+<li><strong>Short-lived credentials.</strong> Google's access token is held only in memory, expires within an hour, and is never written to storage, logs, or a server. ACR Helper never sees your password.</li>
+<li><strong>Hardened pages.</strong> The add-on's pages load code only from ACR Helper's own site and Google, under a strict Content Security Policy, and send no referrer to links they open. There are no analytics, advertising, or tracking scripts.</li>
+<li><strong>Retention and deletion.</strong> ACR Helper retains no user data, so there is nothing to delete on our side. The decision and note the chair records live in the committee's own spreadsheet, under the committee's control.</li>
+<li><strong>Reporting a problem.</strong> If you believe information has been exposed, write to the contact below; we will respond, investigate, and tell affected users what happened.</li>
+</ul>
 <h2>Google API Services User Data Policy</h2>
 <p>ACR Helper's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements. Information from Google is not used for advertising, not sold, not transferred to others except as described above to run the add-on, and not used to train any artificial intelligence or machine learning model.</p>
 <h2>Removing access</h2>

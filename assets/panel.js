@@ -11,11 +11,12 @@
   const $sub = document.getElementById('sub');
   const $diag = document.getElementById('diag');
   const SID = ACR_CONFIG.spreadsheetId;
+  const DRIVE_FILE = 'https://www.googleapis.com/auth/drive.file';
 
   const S = {
     client: null, activity: false, me: null, meetingCode: null,
     sheet: null, tab: null, sheetTabId: null, headers: [], rows: [],
-    session: null, sv: null, pick: null, confirm: null, busy: false, lastError: null,
+    session: null, sv: null, pick: null, confirm: null, busy: false, lastError: null, picked: false,
   };
 
   // ---------- small DOM helpers ----------
@@ -76,6 +77,44 @@
     S.lastError = message;
     show([el('p', 'error', 'Something went wrong: ' + message)], [button('Try again', '', boot)]);
     sendStage({ type: 'error', message });
+  }
+  // drive.file (Google's verification review, 2026-11-23): the token opens only
+  // files this person has chosen for ACR Helper, so until then the sheet reads
+  // as 404 exactly like an unshared one. Google's picker, pre-pointed at the
+  // sheet, is the one-time choice; it lists the sheet only if it is shared with
+  // them, so the sheet's sharing still decides. Measured 2026-11-23: 404 before
+  // the pick, 200 after, no API key needed.
+  function viewPick() {
+    show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.'),
+      el('p', 'muted', 'Google asks once. Select the spreadsheet, then press Select.')],
+    [button('Choose the spreadsheet', 'filled', openPicker)]);
+    sendStage({ type: 'signin' });
+  }
+  async function openPicker() {
+    try {
+      if (!window.gapi) await loadScript('https://apis.google.com/js/api.js');
+      if (!(window.google && google.picker)) await new Promise((res, rej) => gapi.load('picker', { callback: res, onerror: () => rej(new Error('Could not load Google\u2019s file picker')) }));
+    } catch (e) { return viewError(e.message); }
+    const view = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
+      .setFileIds(SID).setMode(google.picker.DocsViewMode.LIST);
+    const w = Math.max(280, Math.min(1051, window.innerWidth - 8));
+    const h = Math.max(300, Math.min(650, window.innerHeight - 8));
+    new google.picker.PickerBuilder()
+      .setAppId(ACR_CONFIG.cloudProjectNumber)
+      .setOAuthToken(API.getToken())
+      .addView(view)
+      .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
+      .enableFeature(google.picker.Feature.NAV_HIDDEN)
+      .setSize(w, h)
+      .setCallback(d => {
+        if (d.action === google.picker.Action.PICKED) {
+          S.picked = true;
+          afterSignIn();
+        } else if (d.action === google.picker.Action.CANCEL) {
+          viewPick();
+        }
+      })
+      .build().setVisible(true);
   }
   function viewNoAccess() {
     show([el('p', null, "This review's spreadsheet isn't shared with you."),
@@ -441,10 +480,10 @@
       S.sheet = await API.getSpreadsheet(SID);
     } catch (e) {
       const kind = ACR.refusalKind(e.status, e.reason, e.message);
-      if (kind === 'noaccess') { viewNoAccess(); return false; }
+      if (kind === 'noaccess') { if (S.picked || MOCK) viewNoAccess(); else viewPick(); return false; }
       if (kind === 'scope') {
-        show([el('p', null, 'ACR Helper needs permission to see and edit the review spreadsheet.'),
-          el('p', 'muted', 'Sign in again and tick the Google Sheets box on Google\u2019s screen.')],
+        show([el('p', null, 'ACR Helper needs permission to open the review spreadsheet.'),
+          el('p', 'muted', 'Sign in again and allow access on Google\u2019s screen.')],
         [button('Sign in again', 'filled', () => signIn(false, true))]);
         return false;
       }
@@ -494,12 +533,13 @@
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: ACR_CONFIG.oauthClientId,
       scope: ACR_CONFIG.scopes,
+      include_granted_scopes: false,
       prompt: '',
       callback: r => {
         if (r.error) return viewError('Sign-in did not finish: ' + r.error);
-        if (!google.accounts.oauth2.hasGrantedAllScopes(r, 'https://www.googleapis.com/auth/spreadsheets')) {
-          show([el('p', null, 'ACR Helper needs permission to see and edit the review spreadsheet.'),
-            el('p', 'muted', 'Sign in again and tick the Google Sheets box on Google\u2019s screen.')],
+        if (!google.accounts.oauth2.hasGrantedAllScopes(r, DRIVE_FILE)) {
+          show([el('p', null, 'ACR Helper needs permission to open the review spreadsheet.'),
+            el('p', 'muted', 'Sign in again and allow access on Google\u2019s screen.')],
           [button('Sign in again', 'filled', () => signIn(false, true))]);
           return;
         }
