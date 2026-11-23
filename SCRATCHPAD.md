@@ -51,8 +51,23 @@
   call qzn-wkwb-pjb) opened at 150px and listed no file, with or without
   setOrigin; the gmail account cannot join minerva.edu calls ("You can't
   join this video call").
-- **Not yet verified**: the v0.6.2 pick window in Meet for a first-time
-  person (see below for the result if logged).
+- **Verified in Meet, v0.6.2 (call tqo-tqeb-tye, 10:25-10:30)**: gmail
+  (first time, never picked) pressed Choose the spreadsheet; the pick
+  window listed the TEST sheet, Ben clicked it, the window closed itself and
+  the panel opened the lobby. gmail started the review as chair (TEST-0009);
+  minerva.edu asked to join, was admitted, joined the activity; its stage
+  said "Sign in from the side panel" until One Tap + Open the review, then
+  followed to TEST-0009 ("0 of 2", "Chair: Ben Wilkoff", no picker needed).
+  Member voted Reject: chair stage "1 of 2" with name only (sealed). Chair
+  Admit, Reveal: Admit 1 / Reject 1 with names on both. Record Reject: the
+  sheet reads `No` for TEST-0009; member saw "Recorded: Reject".
+- **Not verified**: the pick window's Cancel button in Meet (closing the
+  window returned to Choose the spreadsheet on localhost); the in-panel
+  refusal for an account without sheet access.
+- **Test data left**: TEST-0008 `Maybe` and TEST-0009 `No` with notes, in
+  the TEST sheet only.
+- Reply to Google drafted in ben.wilkoff@minerva.edu (plain text, no
+  links), not sent.
 
 ### 2026-11-19: first real-call test (call bkr-rpwk-qka)
 
