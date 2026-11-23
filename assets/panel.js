@@ -87,12 +87,41 @@
   function viewPick() {
     show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.'),
       el('p', 'muted', 'Google asks once. Select the spreadsheet, then press Select.')],
-    [button('Choose the spreadsheet', 'filled', openPicker)]);
+    [button('Choose the spreadsheet', 'filled', openPicker), button('Open in a window', '', openPickWindow)]);
     sendStage({ type: 'signin' });
   }
-  function openPicker() {
-    const w = window.open(new URL('pick/?v=' + ACR_CONFIG.version, location.href).href, 'acr-pick', 'popup,width=760,height=560');
-    if (!w) return viewError('The file picker window was blocked. Allow pop-ups for Meet and try again.');
+  // The one-time file choice, inside the sidebar (Ben, 2026-11-23: one pop-up,
+  // not several). Measured earlier: inside Meet the Picker listed no file while
+  // this page's CSP blocked its inline styles; they are allowed now. If it
+  // still fails, "Open in a window" uses addon/pick/ (top level).
+  async function openPicker() {
+    try {
+      if (!window.gapi) await loadScript('https://apis.google.com/js/api.js');
+      if (!(window.google && google.picker)) await new Promise((res, rej) => gapi.load('picker', { callback: res, onerror: () => rej(new Error('Could not load Google\u2019s file picker')) }));
+    } catch (e) { return viewError(e.message); }
+    const g = google.picker;
+    const view = new g.DocsView(g.ViewId.SPREADSHEETS).setFileIds(SID).setMode(g.DocsViewMode.LIST);
+    new g.PickerBuilder()
+      .setAppId(ACR_CONFIG.cloudProjectNumber)
+      .setOAuthToken(API.getToken())
+      .setOrigin(topOrigin())
+      .addView(view)
+      .enableFeature(g.Feature.SUPPORT_DRIVES)
+      .enableFeature(g.Feature.NAV_HIDDEN)
+      .setSize(Math.max(280, window.innerWidth - 8), Math.max(300, window.innerHeight - 8))
+      .setCallback(d => {
+        if (d.action === g.Action.PICKED) { S.picked = true; afterSignIn(); }
+        else if (d.action === g.Action.CANCEL) viewPick();
+      })
+      .build().setVisible(true);
+  }
+  function topOrigin() {
+    const a = location.ancestorOrigins;
+    return (a && a.length) ? a[a.length - 1] : location.origin;
+  }
+  function openPickWindow() {
+    const w = window.open(new URL('pick/?v=' + ACR_CONFIG.version, location.href).href, 'acr-pick', 'popup,width=760,height=620');
+    if (!w) return viewError('The window was blocked. Allow pop-ups for Meet and try again.');
     let done = false;
     const onMsg = e => {
       if (e.origin !== location.origin || e.source !== w || !e.data || !e.data.acrPick) return;
@@ -104,9 +133,8 @@
       if (m === 'picked') { S.picked = true; afterSignIn(); } else viewPick();
     };
     window.addEventListener('message', onMsg);
-    show([el('p', 'muted', 'Choose the spreadsheet in the window that opened.')],
-      [button('Open it again', '', openPicker)]);
   }
+  function begin() { signIn(false); }
   function viewNoAccess() {
     show([el('p', null, "This review's spreadsheet isn't shared with you."),
       el('p', 'muted', 'Ask the committee chair to share it with your Google account.')]);
@@ -114,7 +142,7 @@
   }
   function viewSignIn() {
     show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.')],
-      [button('Sign in with Google', 'filled', () => signIn(false))]);
+      [button('Sign in with Google', 'filled', begin)]);
     sendStage({ type: 'signin' });
     oneTap();
   }
@@ -138,7 +166,7 @@
         if (!email) return;
         try { localStorage.setItem('acr-hint', email); } catch (_) {}
         show([el('p', null, 'Signed in to Google as ' + email + '.')],
-          [button('Open the review', 'filled', () => signIn(false))]);
+          [button('Open the review', 'filled', begin)]);
       },
     });
     id.prompt(n => {
