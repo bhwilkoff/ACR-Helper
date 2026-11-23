@@ -84,16 +84,16 @@
   // sheet, is the one-time choice; it lists the sheet only if it is shared with
   // them, so the sheet's sharing still decides. Measured 2026-11-23: 404 before
   // the pick, 200 after, no API key needed.
-  function viewPick() {
-    show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.'),
-      el('p', 'muted', 'Google asks once. Select the spreadsheet, then press Select.')],
-    [button('Choose the spreadsheet', 'filled', openPicker), button('Open in a window', '', openPickWindow)]);
-    sendStage({ type: 'signin' });
+  function viewPick(cancelled) {
+    if (!cancelled) {
+      show([el('p', 'muted', 'Choose the review spreadsheet. Google asks once.')]);
+      sendStage({ type: 'signin' });
+      openPicker();
+      return;
+    }
+    show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.')],
+      [button('Choose the spreadsheet', 'filled', openPicker)]);
   }
-  // The one-time file choice, inside the sidebar (Ben, 2026-11-23: one pop-up,
-  // not several). Measured earlier: inside Meet the Picker listed no file while
-  // this page's CSP blocked its inline styles; they are allowed now. If it
-  // still fails, "Open in a window" uses addon/pick/ (top level).
   async function openPicker() {
     try {
       if (!window.gapi) await loadScript('https://apis.google.com/js/api.js');
@@ -111,28 +111,13 @@
       .setSize(Math.max(280, window.innerWidth - 8), Math.max(300, window.innerHeight - 8))
       .setCallback(d => {
         if (d.action === g.Action.PICKED) { S.picked = true; afterSignIn(); }
-        else if (d.action === g.Action.CANCEL) viewPick();
+        else if (d.action === g.Action.CANCEL) viewPick(true);
       })
       .build().setVisible(true);
   }
   function topOrigin() {
     const a = location.ancestorOrigins;
     return (a && a.length) ? a[a.length - 1] : location.origin;
-  }
-  function openPickWindow() {
-    const w = window.open(new URL('pick/?v=' + ACR_CONFIG.version, location.href).href, 'acr-pick', 'popup,width=760,height=620');
-    if (!w) return viewError('The window was blocked. Allow pop-ups for Meet and try again.');
-    let done = false;
-    const onMsg = e => {
-      if (e.origin !== location.origin || e.source !== w || !e.data || !e.data.acrPick) return;
-      const m = e.data.acrPick;
-      if (m === 'ready') { w.postMessage({ acrPickToken: API.getToken() }, location.origin); return; }
-      if (done) return;
-      done = true;
-      window.removeEventListener('message', onMsg);
-      if (m === 'picked') { S.picked = true; afterSignIn(); } else viewPick();
-    };
-    window.addEventListener('message', onMsg);
   }
   function begin() { signIn(false); }
   function viewNoAccess() {
@@ -141,14 +126,17 @@
     sendStage({ type: 'noaccess' });
   }
   function viewSignIn() {
-    // The button first, where a new person looks: it is one Google window for
-    // sign-in and permission together. One Tap (required by Meet) sits below
-    // it instead of covering it; One Tap costs a new person a second window.
-    const slot = el('div', 'onetap-slot'); slot.id = 'onetap-slot';
-    show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.'),
-      button('Sign in with Google', 'filled', begin), slot]);
+    // Ben, 2026-11-23: fewest clicks, fewest pop-ups. A new person gets one
+    // button: one Google window (account + permission), then the chooser opens
+    // by itself in this sidebar. One Tap is only for people who finished setup
+    // before, where it signs in silently; for a new person it added Google's
+    // separate confirm window (measured).
+    let ready = false;
+    try { ready = localStorage.getItem('acr-ready') === '1'; } catch (_) {}
+    show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.')],
+      [button('Sign in with Google', 'filled', begin)]);
     sendStage({ type: 'signin' });
-    oneTap();
+    if (ready) oneTap();
   }
 
   // Google's One Tap prompt, inside the panel (Meet's review asks for it when
@@ -166,7 +154,6 @@
       auto_select: true,
       cancel_on_tap_outside: false,
       use_fedcm_for_prompt: false,
-      prompt_parent_id: 'onetap-slot',
       callback: r => {
         const email = emailFromCredential(r && r.credential);
         if (!email) return;
@@ -520,6 +507,7 @@
       throw e;
     }
     $sub.textContent = S.sheet.title;
+    try { localStorage.setItem('acr-ready', '1'); } catch (_) {}
     return true;
   }
 

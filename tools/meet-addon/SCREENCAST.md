@@ -8,11 +8,10 @@ s6-review, s7-sheet) and cards 01-08 (`cards.json`, `make.py`). Call
 xgw-gwmt-ccf / sgz-pwwt-nky hosted by benwilkoff@gmail.com, TEST-0010.
 
 How to reset so the consent screen and the picker appear on camera:
-- myaccount.google.com/connections > ACR Helper > Delete all, for **every**
-  account in that Chrome profile (One Tap auto-picks the only account that
-  still has a grant).
 - drive.google.com/drive/settings > Manage apps > ACR Helper > Disconnect
-  from Drive. "Delete all" alone keeps the drive.file per-file grant.
+  from Drive. This one step removes the sheet choice **and** the approval.
+  Do it while ACR Helper still has access: after myaccount "Delete all" the
+  app leaves Drive's list but the sheet choice survives (measured Nov 23).
 - Start recording a pop-up window ~2.5 s after it appears; starting at once
   crashed the recorder ("connection being interrupted").
 - Compile the recorder with `swiftc -O -parse-as-library`.

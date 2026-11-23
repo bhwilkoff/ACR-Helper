@@ -212,7 +212,10 @@ means "not shared". The Picker lists the sheet only if it is shared with the
 person, so the sheet's sharing is still the access list. Request tokens with
 `include_granted_scopes: false` so an old `spreadsheets` grant never hides a
 missing drive.file grant. Never add a broader Drive or Sheets scope back.
-The Picker runs in a top-level window on our origin (`addon/pick/`), not in
-the panel: inside Meet's nested frames it opened but listed no file and
-sized itself to 150px (measured Nov 23), with or without `setOrigin`. It is
-one extra window, once per person.
+The Picker opens by itself inside the sidebar right after sign-in (v0.8.0,
+measured in Meet Nov 23). It had shown blank there only because the panel's
+CSP blocked its inline styles. A new person sees one button and one Google
+window (account and permission together); One Tap runs only for people who
+finished setup before (it signs them in silently), because for a new person
+it adds Google's own "Confirm you want to sign in" window (measured, with and
+without FedCM). Ben: "fewest clicks and fewest pop-ups".
