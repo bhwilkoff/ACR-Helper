@@ -106,6 +106,7 @@
       .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
       .enableFeature(google.picker.Feature.NAV_HIDDEN)
       .setSize(w, h)
+      .setOrigin(topOrigin())
       .setCallback(d => {
         if (d.action === google.picker.Action.PICKED) {
           S.picked = true;
@@ -115,6 +116,12 @@
         }
       })
       .build().setVisible(true);
+  }
+  // Inside Meet the panel is a nested frame; the Picker stays blank unless told
+  // the top page's origin (measured in Meet 2026-11-23).
+  function topOrigin() {
+    const a = location.ancestorOrigins;
+    return (a && a.length) ? a[a.length - 1] : location.origin;
   }
   function viewNoAccess() {
     show([el('p', null, "This review's spreadsheet isn't shared with you."),

@@ -14,20 +14,21 @@ OAuth Verification Request Acknowledgement", project acr-helper
 | 3 | New demo video: consent screen with every scope expanded, scopes matching the console, the scopes' full use | Needed only if a sensitive scope remains. With Option 1 every scope is non-sensitive, so Google should close the sensitive-scope review; a new video is ready to record if they still ask (shot list below). |
 | 4 | Test credentials and step-by-step instructions | Reviewer steps below. Needs Ben's choice on how a reviewer reaches the TEST sheet. |
 
-## Console changes (Google Auth Platform > Data Access, project acr-helper)
+## Console changes (done by the agent, Nov 23, read back after reload)
 
-Google's Option 1, step by step:
-
-1. Add `https://www.googleapis.com/auth/drive.file` (non-sensitive).
-2. Remove `https://www.googleapis.com/auth/spreadsheets`. It was never
-   approved, so Google's "DO NOT remove any previously approved scopes"
-   does not apply to it, and their step 2 says to remove it.
-3. Save. Enable the **Google Picker API** for the project if the console
-   asks (the picker ran without it on localhost, Nov 23).
-4. Marketplace SDK > App Configuration: OAuth scopes list must match
-   (replace `spreadsheets` with `drive.file`). The store listing is "in
-   review and can't be edited", so this may need to wait for that review
-   or for a new submission.
+- Google Auth Platform > Data Access: added `drive.file`, removed
+  `spreadsheets` (never approved). Save asked "Saving will update your
+  verification request"; Confirm. Read back: non-sensitive scopes
+  drive.file, userinfo.email, userinfo.profile, openid; no sensitive or
+  restricted scopes.
+- Verification Center now reads: "Verification is not required since your
+  app is not requesting any sensitive or restricted scopes." Branding
+  still verified and shown.
+- **Not done, locked:** Marketplace SDK > App Configuration > OAuth Scopes
+  still lists `spreadsheets` as Scope 3. Save Draft is disabled while the
+  store listing is in review. Change Scope 3 to
+  `https://www.googleapis.com/auth/drive.file` as soon as it unlocks
+  (after the listing review, or if Google returns it for changes).
 
 ## Reply to send (from ben.wilkoff@minerva.edu, replying in the same thread)
 
