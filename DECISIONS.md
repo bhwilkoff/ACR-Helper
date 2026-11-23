@@ -215,7 +215,9 @@ missing drive.file grant. Never add a broader Drive or Sheets scope back.
 The Picker opens by itself inside the sidebar right after sign-in (v0.8.0,
 measured in Meet Nov 23). It had shown blank there only because the panel's
 CSP blocked its inline styles. A new person sees one button and one Google
-window (account and permission together); One Tap runs only for people who
-finished setup before (it signs them in silently), because for a new person
-it adds Google's own "Confirm you want to sign in" window (measured, with and
-without FedCM). Ben: "fewest clicks and fewest pop-ups".
+window (account and permission together). One Tap is off for everyone
+(v0.8.1): for a new person it adds Google's own "Confirm you want to sign in"
+window (measured, with and without FedCM), and a returning person's button
+press already finishes with no visible window. Google's Meet guide only
+"strongly recommends" One Tap; if the Marketplace review insists, call
+oneTap() from viewSignIn again. Ben: "fewest clicks and fewest pop-ups".

@@ -126,17 +126,14 @@
     sendStage({ type: 'noaccess' });
   }
   function viewSignIn() {
-    // Ben, 2026-11-23: fewest clicks, fewest pop-ups. A new person gets one
-    // button: one Google window (account + permission), then the chooser opens
-    // by itself in this sidebar. One Tap is only for people who finished setup
-    // before, where it signs in silently; for a new person it added Google's
-    // separate confirm window (measured).
-    let ready = false;
-    try { ready = localStorage.getItem('acr-ready') === '1'; } catch (_) {}
+    // Ben, 2026-11-23: one button, nothing else that signs in. A new person
+    // gets one Google window (account + permission), then the chooser opens by
+    // itself in this sidebar; a returning person's press finishes with no
+    // visible window. One Tap is off: for a new person it added Google's own
+    // confirm window, and for a returning person it saved nothing (measured).
     show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.')],
       [button('Sign in with Google', 'filled', begin)]);
     sendStage({ type: 'signin' });
-    if (ready) oneTap();
   }
 
   // Google's One Tap prompt, inside the panel (Meet's review asks for it when
