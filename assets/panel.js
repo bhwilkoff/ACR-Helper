@@ -151,6 +151,7 @@
   // someone is not signed in). It only says who the person is; the Sheets
   // permission still comes from the token client, now told which account.
   let oneTapShown = false;
+  let autoAfterOneTap = false;
   function oneTap() {
     if (oneTapShown || MOCK || HARNESS || !ACR_CONFIG.oauthClientId) return;
     const id = window.google && google.accounts && google.accounts.id;
@@ -160,13 +161,18 @@
       client_id: ACR_CONFIG.oauthClientId,
       auto_select: true,
       cancel_on_tap_outside: false,
-      use_fedcm_for_prompt: true,
+      use_fedcm_for_prompt: false,
       callback: r => {
         const email = emailFromCredential(r && r.credential);
         if (!email) return;
         try { localStorage.setItem('acr-hint', email); } catch (_) {}
         show([el('p', null, 'Signed in to Google as ' + email + '.')],
           [button('Open the review', 'filled', begin)]);
+        // The press on One Tap counts as this frame's click, so Google's one
+        // permission window can open now, without a second press. If the
+        // browser refuses, the button above is the fallback.
+        autoAfterOneTap = true;
+        begin();
       },
     });
     id.prompt(n => {
@@ -565,7 +571,10 @@
         gotToken(r.access_token, Number(r.expires_in) || 3600, pendingAgain);
       },
       error_callback: e => {
-        if (e && e.type === 'popup_failed_to_open') return signInTab(pendingAgain);
+        if (e && e.type === 'popup_failed_to_open') {
+          if (autoAfterOneTap) { autoAfterOneTap = false; return; }
+          return signInTab(pendingAgain);
+        }
         if (e && e.type === 'popup_closed') return viewSignIn();
         viewError('Sign-in did not finish: ' + ((e && (e.type || e.message)) || 'unknown'));
       },
