@@ -1,3 +1,26 @@
+# Review video (drive.file), 2026-11-23
+
+**Uploaded:** youtu.be/hFSTPAD5ikQ, Unlisted, "ACR Helper: Google Meet add-on,
+OAuth review (drive.file)", on Ben's channel (benwilkoff@gmail.com), 3:24.
+Built with `screencast/build.sh <clips> <work>` from eight window clips
+(s1-signin, s1b-confirm, s2-openreview, s3-consent, s4-choose, s5-pick,
+s6-review, s7-sheet) and cards 01-08 (`cards.json`, `make.py`). Call
+xgw-gwmt-ccf / sgz-pwwt-nky hosted by benwilkoff@gmail.com, TEST-0010.
+
+How to reset so the consent screen and the picker appear on camera:
+- myaccount.google.com/connections > ACR Helper > Delete all, for **every**
+  account in that Chrome profile (One Tap auto-picks the only account that
+  still has a grant).
+- drive.google.com/drive/settings > Manage apps > ACR Helper > Disconnect
+  from Drive. "Delete all" alone keeps the drive.file per-file grant.
+- Start recording a pop-up window ~2.5 s after it appears; starting at once
+  crashed the recorder ("connection being interrupted").
+- Compile the recorder with `swiftc -O -parse-as-library`.
+- Picker rows cannot be selected through Accessibility; a person clicks.
+- One Tap's chooser shows the second account; build.sh blurs that line.
+
+---
+
 # Review video, shot by shot (2026-11-19)
 
 *Made by Claude the way Human Shaped's was (humanshaped-site/tools/meet-addon/SCREENCAST.md).*

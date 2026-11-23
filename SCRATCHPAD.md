@@ -12,9 +12,10 @@
   one-time Picker window (decision 014); console Data Access changed and
   the Verification Center now says verification is not required. Privacy
   policy has "How sensitive data is protected". **Waiting on Ben**: send
-  the reply in tools/meet-addon/VERIFICATION-REPLY.md; Marketplace App
-  Configuration still lists `spreadsheets` (locked while the listing is in
-  review).
+  the Gmail draft (ben.wilkoff@minerva.edu, Google's thread; includes the
+  new video youtu.be/hFSTPAD5ikQ and reviewer steps). Listing scopes fixed
+  and resubmitted Nov 23. ACR Helper grants removed from both Ben accounts
+  for the video: each sees consent (and gmail the picker) next time.
 - **Run locally**: `python3 -m http.server 8080`, open
   `http://localhost:8080/tools/dev/` (add `?diag=1`). Tests:
   `node --test tests/*.test.js`.

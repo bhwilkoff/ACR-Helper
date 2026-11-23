@@ -11,7 +11,7 @@ OAuth Verification Request Acknowledgement", project acr-helper
 |---|---|---|
 | 1 | Use the narrower `drive.file` scope instead of `spreadsheets`, or justify why not (Option 1 / Option 2) | **Option 1.** v0.6.0 asks only for `drive.file openid email profile`. The first time a person opens the add-on, Google's Picker (pre-pointed at the committee's sheet with `setFileIds`) asks them to choose it once. Measured Nov 23 with a `drive.file`-only token: the Sheets API returned 404 for the TEST sheet before the pick and 200 after, hidden `_acr` tab included. No API key needed. |
 | 2 | Privacy policy must state data protection mechanisms for sensitive data | New section "How sensitive data is protected" on https://acr.humanshaped.org/privacy/ (no copies, TLS + AES-256-GCM end to end, ECDH-sealed votes, Google-enforced access on every request, least access via drive.file, memory-only tokens, strict CSP and no trackers, nothing retained, how to report a problem). |
-| 3 | New demo video: consent screen with every scope expanded, scopes matching the console, the scopes' full use | Needed only if a sensitive scope remains. With Option 1 every scope is non-sensitive, so Google should close the sensitive-scope review; a new video is ready to record if they still ask (shot list below). |
+| 3 | New demo video: consent screen with every scope expanded, scopes matching the console, the scopes' full use | Made and uploaded Nov 23: youtu.be/hFSTPAD5ikQ (SCREENCAST.md). Originally judged needed only if a sensitive scope remains. With Option 1 every scope is non-sensitive, so Google should close the sensitive-scope review; a new video is ready to record if they still ask (shot list below). |
 | 4 | Test credentials and step-by-step instructions | Reviewer steps below. Needs Ben's choice on how a reviewer reaches the TEST sheet. |
 
 ## Console changes (done by the agent, Nov 23, read back after reload)
@@ -24,7 +24,7 @@ OAuth Verification Request Acknowledgement", project acr-helper
 - Verification Center now reads: "Verification is not required since your
   app is not requesting any sensitive or restricted scopes." Branding
   still verified and shown.
-- **Not done, locked:** Marketplace SDK > App Configuration > OAuth Scopes
+- **Done Nov 23 (Ben approved):** listing review cancelled, App Configuration Scope 3 changed to drive.file (read back after reload), listing resubmitted ("Review submitted"). Before that it was locked: Marketplace SDK > App Configuration > OAuth Scopes
   still lists `spreadsheets` as Scope 3. Save Draft is disabled while the
   store listing is in review. Change Scope 3 to
   `https://www.googleapis.com/auth/drive.file` as soon as it unlocks

@@ -2,7 +2,7 @@
 # screencast/tighten.py). Longer holds where Google's screens must be read.
 import subprocess, re, sys
 O = sys.argv[1]
-HOLDS = {'v3': 5, 'v1b': 4, 'v5': 4, 'v4c': 3.5}
+HOLDS = {'v3': 5, 'v1b': 4, 'v5': 4, 'v6c': 3.5, 'v7': 4}
 def dur(f): return float(subprocess.run(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',f],capture_output=True,text=True).stdout)
 for name in sys.argv[2:]:
     HOLD = HOLDS.get(name, 2.5)
