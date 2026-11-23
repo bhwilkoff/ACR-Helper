@@ -65,7 +65,7 @@ Steps for the reviewer:
 1. Start a Google Meet call at https://meet.google.com in Chrome on a computer.
 2. Open Activities (the shapes icon, bottom right) > Add-ons > ACR Helper (install it from the Workspace Marketplace if asked).
 3. In the side panel press **Sign in with Google**. Google's consent screen lists: your name and email, and "See, edit, create, and delete only the specific Google Drive files you use with this app". Press Continue.
-4. The panel shows **Choose the spreadsheet**. Press it; Google's Picker opens on "TEST - ACR Helper fake applicants (no real data)". Select it and press **Select**. (This is the drive.file grant.)
+4. The panel shows **Choose the spreadsheet**. Press it; a window opens with Google's Picker on "TEST - ACR Helper fake applicants (no real data)". Select it and press **Select**. (This is the drive.file grant.)
 5. The panel shows a tab picker. Press **Start review**: the main stage opens and shows the first undecided TEST applicant, read from the sheet.
 6. Press a vote (Admit, Waitlist, Reject, Abstain), then **Reveal votes**: the tally appears.
 7. Choose a decision and press **Record**: the decision is written into that applicant's row in the TEST sheet, with a cell note naming who recorded it. Open the TEST sheet to see it.
@@ -80,8 +80,8 @@ Record with the address bar visible; TEST sheet only; English.
 3. Google's consent screen: zoom on the app name and the client ID in the
    address bar; expand every permission ("Show all services" if present):
    name, email, drive.file. Continue.
-4. Choose the spreadsheet > Google Picker on the TEST sheet > Select (the
-   drive.file grant).
+4. Choose the spreadsheet > the window with Google's Picker on the TEST
+   sheet > Select (the drive.file grant).
 5. Start review: the stage shows a TEST applicant (drive.file read).
 6. Vote, Reveal, Record Waitlist; switch to the TEST sheet and show the
    cell now says Maybe with the note (drive.file write).

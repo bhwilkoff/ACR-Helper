@@ -6,10 +6,15 @@
   Verified in real Meet calls: sign-in in the sidebar, two-person sealed
   votes, reveal, record, notes, country flag, Intended Concentration.
   Not yet verified: note-taker handoff to a second person.
-- **Submission (Nov 21)**: Ben submitted both. OAuth data access "under
-  review"; Marketplace listing "in review". Served from
-  https://acr.humanshaped.org/ (decision 013). Not yet verified in a real
-  Meet call on the new domain.
+- **Verification (Nov 23)**: Google refused `spreadsheets` (minimum
+  scope) and asked for data-protection wording, a new video, and test
+  steps. v0.6.x asks only for drive.file + openid/email/profile with a
+  one-time Picker window (decision 014); console Data Access changed and
+  the Verification Center now says verification is not required. Privacy
+  policy has "How sensitive data is protected". **Waiting on Ben**: send
+  the reply in tools/meet-addon/VERIFICATION-REPLY.md; Marketplace App
+  Configuration still lists `spreadsheets` (locked while the listing is in
+  review).
 - **Run locally**: `python3 -m http.server 8080`, open
   `http://localhost:8080/tools/dev/` (add `?diag=1`). Tests:
   `node --test tests/*.test.js`.
@@ -25,6 +30,29 @@
 ---
 
 ## Session log
+
+### 2026-11-23: Google's verification review answered
+
+- **Found**: Google's email (Nov 23) asked for drive.file instead of
+  `spreadsheets`, data protection in the privacy policy, a new video, and
+  test credentials with steps.
+- **Done**: v0.6.0 drive.file scope + Picker with setFileIds; v0.6.1
+  setOrigin; v0.6.2 Picker moved to `addon/pick/` (top-level window).
+  Privacy section, support/tester steps, decision 014. Console: Data Access
+  now drive.file/email/profile/openid (Confirm dialog), Verification Center
+  "Verification is not required". Pages build for 51d693e errored at
+  GitHub; a manual rebuild deployed it.
+- **Verified**: localhost, a drive.file-only token got 404 on TEST before
+  the pick, 200 after, and a later token opened it with no pick. In Meet
+  (call wgf-ogzq-rtg, chair ben.wilkoff@minerva.edu, v0.6.0): sign-in with
+  no window, Start review, stage TEST-0008, vote, reveal, Record Waitlist;
+  the sheet read back `Maybe` for TEST-0008 (drive.file write).
+- **Found in Meet**: the Picker inside the panel (benwilkoff@gmail.com,
+  call qzn-wkwb-pjb) opened at 150px and listed no file, with or without
+  setOrigin; the gmail account cannot join minerva.edu calls ("You can't
+  join this video call").
+- **Not yet verified**: the v0.6.2 pick window in Meet for a first-time
+  person (see below for the result if logged).
 
 ### 2026-11-19: first real-call test (call bkr-rpwk-qka)
 
@@ -79,91 +107,3 @@
 - **Blocked on Ben**: committee members cannot get the add-on until it
   has a Marketplace listing (Install covers only the developer account).
   Profile 3f1c0f29 needs Google's "Verify it's you" sign-in.
-
-### 2026-11-19: loop tick 4, confirm path, Go to row, sign-in, realtime
-
-- **Found**: voting flow working in the harness; confirm path undriven.
-- **Done**: Go to applicant; sign-in popup (`addon/signin/`, Google
-  Identity Services token client, token back by postMessage, memory
-  only, "Stay signed in" 5 minutes before expiry); Supabase Realtime
-  broadcast over its raw websocket (`assets/realtime.js`, no
-  third-party script, rejoin + resync); deployment JSON. Fixed:
-  members who opened before the chair started were not counted (test
-  seen failing first); the Scores two-column rule lost to a later rule,
-  so small stages hit the zoom floor and clipped.
-- **Verified (offline harness only)**: changing the cell behind the
-  chair's back brings up "It now says: Yes. Replace it with No
-  (Reject)?" and Replace writes `No` (mock); Go to 9 moves all three
-  panels; "0 of 3 have voted" with three panels; the recorded stage fits
-  at 560x315 and 1280x720. 22 tests pass.
-- **Built, not verified**: sign-in popup, real Sheets reads/writes and
-  the cell note, `_acr` tab creation, Supabase transport, Meet SDK
-  calls (startActivity, notifyMainStage, getMeetingInfo).
-- **Left**: everything in "Blocked on Ben".
-
-### 2026-11-19: loop tick 3, voting, reveal, record in the panel
-
-- **Found**: session logic tested on a fake bus, panel not wired.
-- **Done**: panel joins the encrypted session (`assets/transport.js`:
-  BroadcastChannel in mock/harness, Supabase to come); lobby with tab
-  picker; four vote buttons; "n of m have voted"; chair Reveal, Vote
-  again, decision picker, Record (re-reads the cell first and asks to
-  confirm if it changed, R22), Next applicant (next undecided),
-  Previous, Skip; `_acr` key read or created via `api.js`; three-panel
-  dev harness with the stage of a member.
-- **Verified (offline harness only)**: full flow with three TEST
-  panels. Before reveal neither member's panel shows a tally; after
-  reveal all three and the member's stage show the same names and
-  choices; Record Waitlist wrote `Maybe` into TEST-0004's decision cell
-  (mock); Next applicant moved everyone to TEST-0005 with votes
-  cleared. Screenshots in the session scratchpad.
-- **Built, not verified**: the confirm-on-changed-cell path (not yet
-  driven), real Sheets writes and the cell note, the `_acr` tab
-  creation, anything in Meet.
-- **Left**: drive the confirm path; Go to row; Google sign-in; Supabase
-  transport.
-
-### 2026-11-19: loop tick 2, encrypted channel and sealed votes
-
-- **Found**: M1 shells, 10 tests.
-- **Done**: `assets/acr-crypto.js` (AES-GCM group envelope bound to
-  the channel name; channel name = SHA-256 of key + meeting code;
-  ECDH P-256 sealed votes bound to session + round);
-  `assets/acr-session.js` (chair owns state, members follow; hello /
-  here / vote / state messages; presence over 45 s; reveal opens votes
-  only then; vote again and moving on clear votes; stale-round votes
-  ignored). Run tests with `node --test tests/*.test.js`.
-- **Verified (offline only)**: 21 tests pass. Mutations seen to fail:
-  plaintext envelope (3 fail), early reveal (2 fail).
-- **Built, not verified**: nothing on a real network yet; transport
-  is a fake bus. Known limit: a member's name on a vote is self-declared
-  inside the envelope, so any sheet reader could spoof a name.
-- **Left**: wire the session into the panel (BroadcastChannel transport
-  for the dev harness, Supabase later), vote UI, reveal, record.
-
-### 2026-11-19: loop tick 1, M1 shells
-
-- **Found**: requirements committed, no code.
-- **Done**: `assets/acr-lib.js` (field filtering by header name with
-  NULL/blank hidden, link building with shape checks, Yes/Maybe/No
-  mapping, cell note text, next undecided); `assets/api.js` (one client,
-  mock mode); `assets/config.js` (test sheet ID live, production ID
-  parked); stage and panel pages with CSP and Meet SDK; mock TEST data;
-  `tools/stage_screens.sh`; dev harness `tools/dev/` with a DevTools
-  driver.
-- **Verified (offline only)**: 10 unit tests pass, and a mutation of
-  the NULL rule makes 2 fail. Stage fits at 560x315, 805x455, and
-  1280x720 (screenshots). In the dev harness the panel starts a review
-  on the first undecided TEST row and Previous moves the stage.
-- **Built, not verified**: anything in Meet (SDK session,
-  startActivity, notifyMainStage). Needs Ben's project number.
-- **Left**: sign-in (needs client ID), voting, realtime, record.
-
-### 2026-11-19: repository made
-
-- **Found**: nothing; new repository.
-- **Done**: copied the web, Meet, Google, data, and process skills and
-  docs from UniversalAppTemplate; wrote AGENTS.md for a Meet add-on
-  gated by a spreadsheet's sharing; wrote `docs/MEET-ADDON.md` from what
-  was measured building the Human Shaped add-on.
-- **Left**: every open question above; no code.
