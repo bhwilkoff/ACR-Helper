@@ -141,8 +141,12 @@
     sendStage({ type: 'noaccess' });
   }
   function viewSignIn() {
-    show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.')],
-      [button('Sign in with Google', 'filled', begin)]);
+    // The button first, where a new person looks: it is one Google window for
+    // sign-in and permission together. One Tap (required by Meet) sits below
+    // it instead of covering it; One Tap costs a new person a second window.
+    const slot = el('div', 'onetap-slot'); slot.id = 'onetap-slot';
+    show([el('p', 'muted', 'Sign in with the Google account the review spreadsheet is shared with.'),
+      button('Sign in with Google', 'filled', begin), slot]);
     sendStage({ type: 'signin' });
     oneTap();
   }
@@ -162,6 +166,7 @@
       auto_select: true,
       cancel_on_tap_outside: false,
       use_fedcm_for_prompt: false,
+      prompt_parent_id: 'onetap-slot',
       callback: r => {
         const email = emailFromCredential(r && r.credential);
         if (!email) return;
