@@ -11,8 +11,8 @@
   steps. v0.6.x asks only for drive.file + openid/email/profile with a
   one-time Picker window (decision 014); console Data Access changed and
   the Verification Center now says verification is not required. Privacy
-  policy has "How sensitive data is protected". **Waiting on Ben**: send
-  the Gmail draft (ben.wilkoff@minerva.edu, Google's thread; new video
+  policy has "How sensitive data is protected". **Reply sent by Ben** 2026-11-23 12:34 MST (he edited the formatting);
+  waiting on Google. Was: the Gmail draft (ben.wilkoff@minerva.edu, Google's thread; new video
   youtu.be/ruo5K9UMRr8, reviewer steps, why no One Tap). v0.8.1 verified in
   Meet (call kdv-pszn-pce): one button, one Google window, Picker opened by
   itself in the side panel, lobby; returning users no window. Listing scopes fixed
