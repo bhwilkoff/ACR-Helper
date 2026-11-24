@@ -18,6 +18,9 @@
   itself in the side panel, lobby; returning users no window. Listing scopes fixed
   and resubmitted Nov 23. ACR Helper grants removed from both Ben accounts
   for the video: each sees consent (and gmail the picker) next time.
+- **Marketplace review (Nov 24)**: started. TEST sheet shared with
+  gsmtestuser@marketplacetest.net (Editor); reply drafted in
+  ben@learningischange.com, waiting on Ben to send.
 - **Run locally**: `python3 -m http.server 8080`, open
   `http://localhost:8080/tools/dev/` (add `?diag=1`). Tests:
   `node --test tests/*.test.js`.
@@ -33,6 +36,31 @@
 ---
 
 ## Session log
+
+### 2026-11-24: Marketplace review started; reviewer access checked
+
+- **Found**: gwm-review@google.com (Nov 24, to benwilkoff@gmail.com, read in
+  ben@learningischange.com) asks for a video and that
+  gsmtestuser@marketplacetest.net be allowed in. The TEST sheet was shared
+  only with Ben's two accounts, samantha and cintia; link access was off
+  (401 signed out), though the Nov 23 reply to the OAuth team said it was on.
+- **Done**: Ben chose Editor; TEST sheet shared with gsmtestuser (read back).
+  Reply drafted in Google's thread (ben@learningischange.com), real links
+  read back, not sent.
+- **Checked, read-only**: console scopes, listing scopes, and config.js match
+  (drive.file, email, profile, openid); Verification Center "not required";
+  listing in review; video unlisted, 3:16; every public page 200; real sheet
+  has no link access (401).
+- **Corrected (Ben: "Update everything that needs to be updated for their
+  review to be accurate.")**: support/, testers/, TESTERS.md (picker in the
+  side panel, no unverified-app warning); privacy/ (notes by the chair or the
+  note-taker; the `acr-ready` marker in the browser; date Nov 24).
+- **Found, not changed (locked during review)**: Developer and Application
+  Website URLs are still bhwilkoff.github.io/ACR-Helper (301 to
+  acr.humanshaped.org); the four screenshots predate the notes button.
+  Editing either means cancelling the review.
+- **After approval**: remove gsmtestuser from the TEST sheet.
+- **Not verified**: the reviewer's path as gsmtestuser.
 
 ### 2026-11-23: Google's verification review answered
 
@@ -71,57 +99,3 @@
   the TEST sheet only.
 - Reply to Google drafted in ben.wilkoff@minerva.edu (plain text, no
   links), not sent.
-
-### 2026-11-19: first real-call test (call bkr-rpwk-qka)
-
-- **Profiles** (by deviceId, account checked on screen): f839cfaa =
-  ben.wilkoff@minerva.edu, chair; 465d58b6 = benwilkoff@gmail.com, no
-  sheet access, admitted as a guest.
-- **Verified in Meet**: ACR Helper appears under Add-ons after Install;
-  the panel loads in Minerva colors; sign-in from the sidebar with only
-  Google's window (v0.3.0, Ben allowed with the Sheets box ticked); the
-  access check passes for the sheet's owner; the hidden `_acr` key tab
-  was created with Ben's own token; Start review opened TEST-0004, the
-  first row with an empty decision (rows 1-3 have Yes/Maybe/No).
-- **Found and fixed**: GIS started on load in a popup failed
-  (`popup_failed_to_open`); an intermediate sign-in tab plus Google's
-  window was too much for Ben (decision 011); any 403 read as "not
-  shared" (now scope / API / not shared); Start review opened no main
-  stage because the panel trusted getActivityStartingState (v0.3.1).
-- **Meet keeps the old panel alive**: after a push, use the add-on's
-  ⋮ > Close add-on, then reopen from Activities, after the 10-minute
-  cache window.
-- **Second call (myc-dbru-ynu), v0.3.2, all verified in Meet**:
-  supportsScreenSharing off removed Meet's "let those without the
-  add-on follow along" tab share; Start review + Continue opened the
-  main stage with the TEST applicant (profile, scores, FA, notes, three
-  links); vote shows "1 of 1 have voted" with the name only; Reveal
-  shows name + choice + counts on panel and stage; Record Waitlist
-  wrote `Maybe` to TEST-0004's decision cell with the note "Recorded by
-  Ben Wilkoff, Nov 19 2026 in ACR Helper" (read back from the sheet).
-  A participant without the add-on (gmail) sees no applicant data;
-  Meet tells them "The activity is not available to you."
-- **Third call (wqv-atvn-zei), v0.4.0, verified in Meet**: One Tap
-  signed the panel in inside the sidebar with no window and no click
-  ("Signed in to Google as ben.wilkoff@minerva.edu"); Open the review
-  then got the Sheets token with no visible Google window to answer, and
-  the lobby appeared. Sign-in is now one press, inside the sidebar.
-- **Two-person test, same call, verified in Meet (10:40)**: chair
-  ben.wilkoff@minerva.edu + member benwilkoff@gmail.com (tester roles,
-  test user, TEST sheet shared as viewer; see tools/meet-addon/TESTERS.md).
-  The member pressed Meet's Join activity, One Tap signed the new panel in,
-  Open the review finished with no window; the member's panel and stage
-  followed the chair to TEST-0005 over the encrypted Supabase channel
-  ("0 of 2 have voted", "Chair: Ben Wilkoff"); member voted Reject and the
-  chair saw only "1 of 2" (sealed); chair voted Admit; Reveal showed
-  Admit 1 / Reject 1 with names on both panels and both stages; Record
-  Reject wrote `No` + note to TEST-0005, and the member saw "Recorded:
-  Reject".
-- **Found**: two accounts with the same Google name look identical on
-  the vote chips (real committee names differ; noted, not fixed).
-- **Not yet verified**: the in-panel no-access refusal
-  for someone who has the add-on but no sheet access; whether the
-  account hint skips Google's chooser (stored now, untested).
-- **Blocked on Ben**: committee members cannot get the add-on until it
-  has a Marketplace listing (Install covers only the developer account).
-  Profile 3f1c0f29 needs Google's "Verify it's you" sign-in.

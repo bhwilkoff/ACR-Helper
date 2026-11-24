@@ -23,10 +23,10 @@ Then the tester, signed in to Chrome as that account:
    scrolls to Deployments, and presses **Install** on `acr-helper`
    ("Deployment installed successfully").
 5. In a Meet call: Activities > Add-ons > ACR Helper. The first sign-in
-   shows Google's permission screen once ("Google hasn't verified this
-   app": Advanced, then Go to ACR Helper; tick the Google Sheets box).
+   shows Google's permission window once (drive.file), then the file picker
+   in the side panel.
 
-Testers so far (Nov 19, 2026): benwilkoff@gmail.com; samantha@minerva.edu and cintia.kussuda@minerva.edu (roles, test users, and TEST sheet read access all read back). Send testers https://bhwilkoff.github.io/ACR-Helper/testers/ for steps 4 and 5.
+Testers so far (Nov 19, 2026): benwilkoff@gmail.com; samantha@minerva.edu and cintia.kussuda@minerva.edu (roles, test users, and TEST sheet read access all read back). Send testers https://acr.humanshaped.org/testers/ for steps 4 and 5.
 
 Steps 1 to 3 are what the agent can do in the console; step 4 needs the
 tester's own signed-in browser; step 5's first Allow is the tester's.
