@@ -99,7 +99,10 @@
   Website URLs are still bhwilkoff.github.io/ACR-Helper (301 to
   acr.humanshaped.org); the four screenshots predate the notes button.
   Editing either means cancelling the review.
-- **After approval**: remove gsmtestuser from the TEST sheet.
+- **After approval**: remove gsmtestuser from the TEST sheet; change the
+  Developer and Application Website URLs to https://acr.humanshaped.org/
+  (Ben, Nov 26: update rather than redirect) and retake the four screenshots,
+  in one edit.
 - **Not verified**: the reviewer's path as gsmtestuser.
 
 ### 2026-11-23: Google's verification review answered
