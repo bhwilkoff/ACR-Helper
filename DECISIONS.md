@@ -221,3 +221,29 @@ window (measured, with and without FedCM), and a returning person's button
 press already finishes with no visible window. Google's Meet guide only
 "strongly recommends" One Tap; if the Marketplace review insists, call
 oneTap() from viewSignIn again. Ben: "fewest clicks and fewest pop-ups".
+
+## 015: The chair adds people to the sheet during the call, from the side panel (2026-11-26)
+
+The chair's panel has **Add someone**: an email and "Can vote" (reader) or
+"Can vote and edit the sheet" (writer). ACR Helper calls Drive's
+`permissions.create` on the review sheet with the chair's own token. A joiner
+the sheet is not shared with is told which account they are signed in as and
+that the chair can add them now, with **Choose the spreadsheet** / **Check
+again** to continue once added.
+
+**Why:** Google's Marketplace review rejected v0.8.1 on Nov 26 under "If
+multi-player experience, add-on MUST allow for all participants to
+collaborate on content even if permissions are not set in advance.
+Permission adjustment MUST be available during the collaborative add-on
+session", noting "Add-on not showing the correct activity when joining an
+active one." A joiner without access saw an empty Picker and a stage saying
+only "Sign in", with no way forward inside the call. The sheet's sharing
+stays the access list (AGENTS.md fact 1); the chair, a person, decides who
+is added.
+
+**How to apply:** drive.file covers sharing because the chair picked the
+sheet; a chair without share rights gets 403 ("Ask its owner"). The typed
+email goes only to Google, never to the realtime channel. The panel resends
+its last stage view when a late stage says `stage-ready` (redrawing there
+had jumped to the lobby), and the lobby waits until the channel has joined
+plus 4 seconds, so a joiner is not told "No review is running" while one is.

@@ -89,8 +89,10 @@
     root.style.zoom = '';
     switch (v && v.type) {
       case 'applicant': renderApplicant(v); break;
-      case 'noaccess': msg("This review's spreadsheet isn't shared with you."); break;
+      case 'noaccess': msg("This review's spreadsheet isn't shared with you. The chair can add you from their side panel."); break;
       case 'signin': msg('Sign in from the side panel to see the review.'); break;
+      case 'pick': msg('Choose the review spreadsheet in the side panel. If it isn\u2019t listed, the chair can add you from theirs.'); break;
+      case 'joining': msg('Looking for the review in this call…'); break;
       case 'waiting': msg('Waiting for the chair to start the review.'); break;
       case 'done': msg('Every applicant on this tab has a decision.'); break;
       case 'error': msg('Something went wrong: ' + v.message); break;

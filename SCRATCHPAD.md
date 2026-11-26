@@ -18,9 +18,15 @@
   itself in the side panel, lobby; returning users no window. Listing scopes fixed
   and resubmitted Nov 23. ACR Helper grants removed from both Ben accounts
   for the video: each sees consent (and gmail the picker) next time.
-- **Marketplace review (Nov 24)**: started. TEST sheet shared with
-  gsmtestuser@marketplacetest.net (Editor); reply drafted in
-  ben@learningischange.com, waiting on Ben to send.
+- **Marketplace review (Nov 26)**: REJECTED: "allow all participants to
+  collaborate even if permissions are not set in advance; permission
+  adjustment during the session"; note "not showing the correct activity
+  when joining an active one" (video photos.app.goo.gl/oHVyYmTWw5EDCUfE7,
+  not viewable from the cloud container). v0.9.0 (decision 015): chair's
+  **Add someone** shares the sheet in-call; joiner without access is told
+  how; stage-ready resends the last view; lobby waits for the channel.
+  Verified only in the mock harness. Next: Ben tests in a real call with an
+  unshared second account, then republishes in the Marketplace SDK.
 - **Run locally**: `python3 -m http.server 8080`, open
   `http://localhost:8080/tools/dev/` (add `?diag=1`). Tests:
   `node --test tests/*.test.js`.
@@ -36,6 +42,26 @@
 ---
 
 ## Session log
+
+### 2026-11-26: Marketplace rejection (joining an active activity)
+
+- **Found**: gwm-review rejected ACR Helper (guideline 1, permissions during
+  a multi-player session; "not showing the correct activity when joining an
+  active one"). Their video could not be fetched (photos.app.goo.gl blocked;
+  no Remote Control folder on Ben's computer). In code: an unshared joiner got
+  an empty Picker and a stage saying "Sign in", with no way in; a stage that
+  loaded after its panel made the panel redraw into the lobby (or throw
+  before sign-in); the lobby showed after 2.5 s even if the channel had not
+  joined.
+- **Done (v0.9.0)**: Add someone (Drive permissions.create, chair's token);
+  joiner copy and Check again / Use another account; stage `pick`/`joining`
+  views; stage-ready resends the last view; lobby waits for the channel.
+  Privacy, support, testers pages; decision 015.
+- **Verified**: mock harness (Playwright): chair adds an email, status shows;
+  a member panel reloaded after Start review shows the applicant at 0.8 s,
+  not the lobby; tests, US English, secrets checks pass.
+- **Not verified**: anything in a real Meet call; Drive sharing with a real
+  drive.file token.
 
 ### 2026-11-24: Marketplace review started; reviewer access checked
 
@@ -61,41 +87,3 @@
   Editing either means cancelling the review.
 - **After approval**: remove gsmtestuser from the TEST sheet.
 - **Not verified**: the reviewer's path as gsmtestuser.
-
-### 2026-11-23: Google's verification review answered
-
-- **Found**: Google's email (Nov 23) asked for drive.file instead of
-  `spreadsheets`, data protection in the privacy policy, a new video, and
-  test credentials with steps.
-- **Done**: v0.6.0 drive.file scope + Picker with setFileIds; v0.6.1
-  setOrigin; v0.6.2 Picker moved to `addon/pick/` (top-level window).
-  Privacy section, support/tester steps, decision 014. Console: Data Access
-  now drive.file/email/profile/openid (Confirm dialog), Verification Center
-  "Verification is not required". Pages build for 51d693e errored at
-  GitHub; a manual rebuild deployed it.
-- **Verified**: localhost, a drive.file-only token got 404 on TEST before
-  the pick, 200 after, and a later token opened it with no pick. In Meet
-  (call wgf-ogzq-rtg, chair ben.wilkoff@minerva.edu, v0.6.0): sign-in with
-  no window, Start review, stage TEST-0008, vote, reveal, Record Waitlist;
-  the sheet read back `Maybe` for TEST-0008 (drive.file write).
-- **Found in Meet**: the Picker inside the panel (benwilkoff@gmail.com,
-  call qzn-wkwb-pjb) opened at 150px and listed no file, with or without
-  setOrigin; the gmail account cannot join minerva.edu calls ("You can't
-  join this video call").
-- **Verified in Meet, v0.6.2 (call tqo-tqeb-tye, 10:25-10:30)**: gmail
-  (first time, never picked) pressed Choose the spreadsheet; the pick
-  window listed the TEST sheet, Ben clicked it, the window closed itself and
-  the panel opened the lobby. gmail started the review as chair (TEST-0009);
-  minerva.edu asked to join, was admitted, joined the activity; its stage
-  said "Sign in from the side panel" until One Tap + Open the review, then
-  followed to TEST-0009 ("0 of 2", "Chair: Ben Wilkoff", no picker needed).
-  Member voted Reject: chair stage "1 of 2" with name only (sealed). Chair
-  Admit, Reveal: Admit 1 / Reject 1 with names on both. Record Reject: the
-  sheet reads `No` for TEST-0009; member saw "Recorded: Reject".
-- **Not verified**: the pick window's Cancel button in Meet (closing the
-  window returned to Choose the spreadsheet on localhost); the in-panel
-  refusal for an account without sheet access.
-- **Test data left**: TEST-0008 `Maybe` and TEST-0009 `No` with notes, in
-  the TEST sheet only.
-- Reply to Google drafted in ben.wilkoff@minerva.edu (plain text, no
-  links), not sent.

@@ -10,6 +10,7 @@
   const $foot = document.getElementById('foot');
   const $sub = document.getElementById('sub');
   const $diag = document.getElementById('diag');
+  const $share = document.getElementById('share');
   const SID = ACR_CONFIG.spreadsheetId;
   const DRIVE_FILE = 'https://www.googleapis.com/auth/drive.file';
 
@@ -54,6 +55,7 @@
     }
     const notesBox = document.getElementById('notes');
     if (notesBox) notesBox.hidden = true;
+    $share.hidden = true;
     $main.replaceChildren(...nodes);
     $foot.replaceChildren(...(footNodes || []));
     $foot.hidden = !(footNodes && footNodes.length);
@@ -62,6 +64,7 @@
 
   // ---------- stage ----------
   function sendStage(view) {
+    S.lastStage = view;
     const text = JSON.stringify(view);
     if (HARNESS) { window.parent.postMessage({ to: 'stage', data: text }, location.origin); return; }
     // Meet's answer about a running activity is not trusted; a panel opened by
@@ -87,13 +90,19 @@
   function viewPick(cancelled) {
     if (!cancelled) {
       show([el('p', 'muted', 'Choose the review spreadsheet. Google asks once.')]);
-      sendStage({ type: 'signin' });
+      sendStage({ type: 'pick' });
       openPicker();
       return;
     }
-    show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.')],
-      [button('Choose the spreadsheet', 'filled', openPicker)]);
+    // Marketplace review, 2026-11-26: a joiner the sheet is not shared with
+    // sees an empty Picker. Say who they are signed in as and that the chair
+    // can add them now, from the chair's own panel.
+    show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.'),
+      el('p', 'muted', 'Not in the list? It isn\u2019t shared with ' + myEmail() + ' yet. The chair can add you from their side panel during the call; then choose it again.')],
+    [button('Choose the spreadsheet', 'filled', openPicker), button('Use another account', '', () => signIn(false, false, true))]);
+    sendStage({ type: 'pick' });
   }
+  function myEmail() { return (S.me && S.me.email) || 'your account'; }
   async function openPicker() {
     try {
       if (!window.gapi) await loadScript('https://apis.google.com/js/api.js');
@@ -121,8 +130,9 @@
   }
   function begin() { signIn(false); }
   function viewNoAccess() {
-    show([el('p', null, "This review's spreadsheet isn't shared with you."),
-      el('p', 'muted', 'Ask the committee chair to share it with your Google account.')]);
+    show([el('p', null, "This review's spreadsheet isn't shared with " + myEmail() + '.'),
+      el('p', 'muted', 'The chair can add you from their side panel during the call.')],
+    [button('Check again', 'filled', () => { S.picked = false; afterSignIn(); }), button('Use another account', '', () => signIn(false, false, true))]);
     sendStage({ type: 'noaccess' });
   }
   function viewSignIn() {
@@ -189,6 +199,7 @@
     show([el('p', 'muted', 'No review is running in this call yet.'), field,
       el('p', 'muted', 'Starting makes you chair: everyone who joins sees the applicant you choose.')],
       [button('Start review', 'filled', () => startReview(sel.value))]);
+    $share.hidden = false;
     sendStage({ type: 'waiting' });
   }
 
@@ -254,6 +265,7 @@
     if (a.decisionCell && !sv.recorded) nodes.push(el('p', 'muted', 'In the sheet: ' + a.decisionCell + (a.decision ? ' (' + a.decision + ')' : '')));
     if (!sv.isChair) nodes.push(el('p', 'muted', 'Chair: ' + sv.chair.name));
     show(nodes.concat(sv.isChair ? chairMain(sv).concat([noteTakerPicker(sv), goToRow(sv)]) : []), sv.isChair ? chairControls(sv, a, i) : []);
+    $share.hidden = !sv.isChair;
     updateNotes(sv, i);
   }
 
@@ -572,7 +584,7 @@
     return tokenClient;
   }
 
-  function signIn(again, consent) {
+  function signIn(again, consent, otherAccount) {
     if (!ACR_CONFIG.oauthClientId) return viewError('Google sign-in is not set up yet (needs the OAuth client ID).');
     pendingAgain = !!again;
     const c = initTokenClient();
@@ -581,8 +593,8 @@
     // so Google can skip its account chooser. Storage can be refused; that is fine.
     let hint = '';
     try { hint = localStorage.getItem('acr-hint') || ''; } catch (_) {}
-    const opts = consent ? { prompt: 'consent' } : {};
-    if (hint) opts.hint = hint;
+    const opts = consent ? { prompt: 'consent' } : otherAccount ? { prompt: 'select_account' } : {};
+    if (hint && !otherAccount) opts.hint = hint;
     c.requestAccessToken(opts);
   }
 
@@ -611,13 +623,59 @@
       try { if (S.me && S.me.email) localStorage.setItem('acr-hint', S.me.email); } catch (_) {}
       if (!(await checkAccess())) return;
       if (!S.session) await openSession();
-      setTimeout(() => { if (!S.sv) viewLobby(); }, 2500);
       show([el('p', 'muted', 'Looking for a review in this call…')]);
+      sendStage({ type: 'joining' });
+      lobbyWhenQuiet();
     } catch (e) {
       if (e.status === 401) return viewSignIn();
       viewError(e.message || String(e));
     }
   }
+
+  // Marketplace review, 2026-11-26: a joiner was shown "No review is running"
+  // while one was. The lobby waits until the channel has joined and the chair
+  // has had time to answer this panel's hello.
+  function lobbyWhenQuiet() {
+    const t0 = Date.now();
+    const tick = () => {
+      if (S.sv) return;
+      const t = S.transport;
+      const joined = !t || t.kind !== 'supabase' || t.state === 'joined';
+      if (joined && !S.joinedAt) S.joinedAt = Date.now();
+      if ((S.joinedAt && Date.now() - S.joinedAt > 4000) || Date.now() - t0 > 20000) return viewLobby();
+      setTimeout(tick, 250);
+    };
+    tick();
+  }
+
+  // ---------- adding someone during the call (chair) ----------
+  const $shareForm = document.getElementById('share-form');
+  const $shareOpen = document.getElementById('share-open');
+  const $shareEmail = document.getElementById('share-email');
+  const $shareRole = document.getElementById('share-role');
+  const $shareAdd = document.getElementById('share-add');
+  const $shareStatus = document.getElementById('share-status');
+  $shareOpen.addEventListener('click', () => {
+    $shareForm.hidden = !$shareForm.hidden;
+    $shareOpen.textContent = $shareForm.hidden ? 'Add someone' : 'Close';
+    if (!$shareForm.hidden) { $shareStatus.textContent = ''; $shareEmail.focus(); }
+  });
+  $shareForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = $shareEmail.value.trim();
+    if (!email) return;
+    $shareAdd.disabled = true;
+    $shareStatus.textContent = 'Adding…';
+    try {
+      await API.shareWith(SID, email, $shareRole.value);
+      $shareEmail.value = '';
+      $shareStatus.textContent = 'Added ' + email + '. In their side panel they choose the spreadsheet, then join.';
+    } catch (err) {
+      $shareStatus.textContent = err.status === 403 ? 'Your account cannot share this spreadsheet. Ask its owner.' : 'Something went wrong: ' + err.message;
+    } finally {
+      $shareAdd.disabled = false;
+    }
+  });
 
   setInterval(() => {
     if (!S.tokenExpiresAt || S.expiring) return;
@@ -667,7 +725,8 @@
       const session = await meet.addon.createAddonSession({ cloudProjectNumber: ACR_CONFIG.cloudProjectNumber });
       S.client = await session.createSidePanelClient();
       S.client.on('frameToFrameMessage', m => {
-        try { const msg = JSON.parse(m.payload); if (msg.type === 'stage-ready') render(); } catch (_) {}
+        // A stage that opens after its panel missed what the panel last sent; resend it.
+        try { const msg = JSON.parse(m.payload); if (msg.type === 'stage-ready' && S.lastStage) sendStage(S.lastStage); } catch (_) {}
       });
       try { const info = await S.client.getMeetingInfo(); S.meetingCode = info.meetingCode || info.meetingId || null; } catch (_) {}
     } catch (e) {

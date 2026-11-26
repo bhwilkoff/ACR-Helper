@@ -117,10 +117,21 @@
     return (v[0] && v[0][0] !== undefined) ? String(v[0][0]) : '';
   }
 
+  // Chair only: shares the review sheet with one more person, during the call.
+  // drive.file covers this file because the chair chose it in the Picker.
+  async function shareWith(id, email, role) {
+    if (mock) { (mock.shared = mock.shared || []).push({ email, role }); return; }
+    return call('https://www.googleapis.com/drive/v3/files/' + encodeURIComponent(id) +
+      '/permissions?supportsAllDrives=true&sendNotificationEmail=true&fields=id', {
+      method: 'POST',
+      body: JSON.stringify({ type: 'user', role: role === 'writer' ? 'writer' : 'reader', emailAddress: email }),
+    });
+  }
+
   function mockSet(tab, rowIndex, colIndex, value) {
     if (!mock) throw new Error('mock only');
     mock.tabs[tab][rowIndex][colIndex] = value;
   }
 
-  window.API = { mockSet, useMock, setToken, getToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, ApiError };
+  window.API = { mockSet, useMock, setToken, getToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, shareWith, ApiError };
 })();
