@@ -51,8 +51,20 @@
 - **Verified locally**: `node --test` (door tests included); harness: guest
   asks, chair sees it (member does not), Share, guest follows to the applicant
   ("0 of 3 have voted"), in the lobby and during a review.
-- **Not verified**: drive.file permissions.create against the real sheet; a
-  real Meet call with an unshared second account. Not pushed or resubmitted.
+- **Pushed** v0.9.0 (42bc13b), v0.9.1 (9c0bf1e, Use another account).
+- **Verified in Meet (call oam-kkwm-iic)**: gmail, off the sheet, joined the
+  running activity; picker "No spreadsheets"; Cancel showed Ask the chair; the
+  ask reached the chair panel over Supabase; stage "Ben Wilkoff is running a
+  review. Waiting for access". Share first failed: Drive API was disabled in
+  acr-helper; **enabled it** (console, read back "Disable API").
+- **Found**: the minerva Chrome profile holds minerva, learningischange and
+  gmail sessions; its panel had signed in as gmail, so the "chair" was gmail
+  and Share then 404'd (gmail had just been removed). A fresh minerva token
+  on localhost read the file and its permissions (200, canShare true).
+- **Left**: benwilkoff@gmail.com REMOVED from the TEST sheet for the retest
+  (was Editor); restore Editor after. Retest Share with the chair on
+  minerva via Use another account, after Meet's 10-minute cache. Then draft
+  the reply to gwm-review (Ben reads before sending) and republish.
 
 ### 2026-11-24: Marketplace review started; reviewer access checked
 
