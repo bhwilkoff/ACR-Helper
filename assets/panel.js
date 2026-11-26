@@ -93,7 +93,7 @@
     }
     show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.'),
       el('p', 'muted', 'If Google shows no spreadsheet, it isn\u2019t shared with ' + S.me.email + ' yet.')],
-    [button('Choose the spreadsheet', 'filled', openPicker), button('Ask the chair for access', '', askAccess)]);
+    [button('Choose the spreadsheet', 'filled', openPicker), button('Ask the chair for access', '', askAccess), otherAccount()]);
     sendStage({ type: 'pick' });
   }
   async function openPicker() {
@@ -124,8 +124,17 @@
   function begin() { signIn(false); }
   function viewNoAccess() {
     show([el('p', null, "This review's spreadsheet isn't shared with " + S.me.email + '.')],
-      [button('Ask the chair for access', 'filled', askAccess)]);
+      [button('Ask the chair for access', 'filled', askAccess), otherAccount()]);
     sendStage({ type: 'noaccess' });
+  }
+  // Someone signed in to Chrome with several Google accounts may land on the
+  // wrong one (measured in Meet, 2026-11-26); Google's chooser fixes it.
+  function otherAccount() {
+    return button('Use another account', 'small', () => {
+      try { localStorage.removeItem('acr-hint'); } catch (_) {}
+      S.picked = false; S.asking = false;
+      signIn(false, false, true);
+    });
   }
 
   // ---------- access during the review (the door, acr-door.js) ----------
@@ -668,7 +677,7 @@
     return tokenClient;
   }
 
-  function signIn(again, consent) {
+  function signIn(again, consent, choose) {
     if (!ACR_CONFIG.oauthClientId) return viewError('Google sign-in is not set up yet (needs the OAuth client ID).');
     pendingAgain = !!again;
     const c = initTokenClient();
@@ -678,7 +687,8 @@
     let hint = '';
     try { hint = localStorage.getItem('acr-hint') || ''; } catch (_) {}
     const opts = consent ? { prompt: 'consent' } : {};
-    if (hint) opts.hint = hint;
+    if (choose) opts.prompt = 'select_account';
+    else if (hint) opts.hint = hint;
     c.requestAccessToken(opts);
   }
 
