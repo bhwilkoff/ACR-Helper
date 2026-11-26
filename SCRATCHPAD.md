@@ -18,6 +18,9 @@
   itself in the side panel, lobby; returning users no window. Listing scopes fixed
   and resubmitted Nov 23. ACR Helper grants removed from both Ben accounts
   for the video: each sees consent (and gmail the picker) next time.
+- **Marketplace (Nov 26)**: rejected (permission adjustment during the
+  session); v0.9.1 fixes it, verified in Meet; reply drafted, unsent;
+  republish pending (Ben).
 - **Marketplace review (Nov 24)**: started. TEST sheet shared with
   gsmtestuser@marketplacetest.net (Editor); reply drafted in
   ben@learningischange.com, waiting on Ben to send.
@@ -61,10 +64,18 @@
   gmail sessions; its panel had signed in as gmail, so the "chair" was gmail
   and Share then 404'd (gmail had just been removed). A fresh minerva token
   on localhost read the file and its permissions (200, canShare true).
-- **Left**: benwilkoff@gmail.com REMOVED from the TEST sheet for the retest
-  (was Editor); restore Editor after. Retest Share with the chair on
-  minerva via Use another account, after Meet's 10-minute cache. Then draft
-  the reply to gwm-review (Ben reads before sending) and republish.
+- **Verified in Meet, v0.9.1 (call zcz-mnxg-sxn, 14:48-14:53)**: chair panel
+  landed on gmail; Use another account + Ben's pick in Google's chooser made
+  it minerva. Review TEST-0012; gmail (off the sheet) asked; chair Share
+  showed "Shared with Ben Wilkoff (view only)"; sheet read back gmail
+  `reader`; gmail's picker opened by itself listing TEST; Select; gmail panel
+  and stage on Test-Lin, "0 of 2 have voted", Chair: Ben Wilkoff.
+- **Restored**: benwilkoff@gmail.com back to Editor (read back `writer`).
+  Calls hung up, tabs closed, local server stopped.
+- **Drafted, not sent**: reply to gwm-review in ben@learningischange.com,
+  Google's thread, no links. Ben reads and sends; Ben republishes in the
+  Marketplace SDK.
+- **Not verified**: the Not now path in Meet; Share refused by domain limits.
 
 ### 2026-11-24: Marketplace review started; reviewer access checked
 
