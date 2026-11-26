@@ -19,8 +19,8 @@
   and resubmitted Nov 23. ACR Helper grants removed from both Ben accounts
   for the video: each sees consent (and gmail the picker) next time.
 - **Marketplace (Nov 26)**: rejected (permission adjustment during the
-  session); v0.9.1 fixes it, verified in Meet; reply drafted, unsent;
-  republish pending (Ben).
+  session); v0.9.1 fixes it, verified in Meet. Ben sent the reply; listing
+  resubmitted Nov 26 ~15:45 MST (read back "The draft is in review").
 - **Marketplace review (Nov 24)**: started. TEST sheet shared with
   gsmtestuser@marketplacetest.net (Editor); reply drafted in
   ben@learningischange.com, waiting on Ben to send.
@@ -72,9 +72,9 @@
   and stage on Test-Lin, "0 of 2 have voted", Chair: Ben Wilkoff.
 - **Restored**: benwilkoff@gmail.com back to Editor (read back `writer`).
   Calls hung up, tabs closed, local server stopped.
-- **Drafted, not sent**: reply to gwm-review in ben@learningischange.com,
-  Google's thread, no links. Ben reads and sends; Ben republishes in the
-  Marketplace SDK.
+- **Reply**: drafted in ben@learningischange.com (Google's thread, no links);
+  Ben read and sent it. **Resubmitted** the store listing (Ben: "Go ahead and
+  do the republish"); read back "The draft is in review and can't be edited".
 - **Not verified**: the Not now path in Meet; Share refused by domain limits.
 
 ### 2026-11-24: Marketplace review started; reviewer access checked
