@@ -33,6 +33,16 @@
     return 'acr-' + Array.from(new Uint8Array(h).slice(0, 16), b => b.toString(16).padStart(2, '0')).join('');
   }
 
+  // The door: a channel for people who cannot open the sheet yet, so they hold
+  // no group key. Bound to this call and this sheet; carries only who is asking.
+  async function doorChannel(sheetId, meetingCode) {
+    const seed = 'acr-door1|' + sheetId + '|' + meetingCode;
+    const h = new Uint8Array(await subtle.digest('SHA-256', enc.encode('name|' + seed)));
+    const k = await subtle.digest('SHA-256', enc.encode('key|' + seed));
+    const key = await subtle.importKey('raw', k, 'AES-GCM', false, ['encrypt', 'decrypt']);
+    return { key, channel: 'acr-door-' + Array.from(h.slice(0, 16), b => b.toString(16).padStart(2, '0')).join('') };
+  }
+
   async function aesSeal(key, obj, aad) {
     const iv = rand(12);
     const ct = await subtle.encrypt({ name: 'AES-GCM', iv, additionalData: enc.encode(aad || '') }, key, enc.encode(JSON.stringify(obj)));
@@ -78,7 +88,7 @@
 
   function randomId() { return b64(rand(9)).replace(/[+/=]/g, ''); }
 
-  const lib = { newGroupKey, importGroupKey, channelName, seal, open, newChairKeys, sealVote, openVote, randomId };
+  const lib = { newGroupKey, importGroupKey, channelName, doorChannel, seal, open, newChairKeys, sealVote, openVote, randomId };
   if (typeof module !== 'undefined' && module.exports) module.exports = lib;
   else root.ACRCrypto = lib;
 })(typeof window !== 'undefined' ? window : globalThis);

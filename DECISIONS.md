@@ -221,3 +221,29 @@ window (measured, with and without FedCM), and a returning person's button
 press already finishes with no visible window. Google's Meet guide only
 "strongly recommends" One Tap; if the Marketplace review insists, call
 oneTap() from viewSignIn again. Ben: "fewest clicks and fewest pop-ups".
+
+## 015: Access can be asked for and given during a review (2026-11-26)
+
+Someone in the call who cannot open the sheet presses **Ask the chair for
+access**. The chair's panel (or, before a review starts, the panel of anyone
+who can open the sheet) shows the request with **Share** and **Not now**.
+Share adds that one person to the sheet as a viewer through the Drive API;
+the asker's panel then opens Google's picker by itself and joins the review.
+
+**Why:** Google's Marketplace review rejected v0.8.1 on Nov 26: "add-on MUST
+allow for all participants to collaborate on content even if permissions are
+not set in advance. Permission adjustment MUST be available during the
+collaborative add-on session." The reviewer joined with an account the TEST
+sheet was not shared with; it stuck on "Choose the spreadsheet" and its stage
+said "Sign in from the side panel." The sheet's sharing is still the access
+list (fact 1 in AGENTS.md): the add-on only changes it when a person who may
+share presses Share.
+
+**How to apply:** requests travel on a separate "door" channel
+(`assets/acr-door.js`) because the asker has no group key. Its key and name
+come from the sheet ID and the meeting code (`ACRCrypto.doorChannel`), so the
+relay sees only ciphertext; it carries a name, an email, and the chair's name,
+never sheet data. Share is view only and first lists the sheet's permissions,
+so someone already on it (an editor who skipped the picker) is never
+downgraded. Not verified: whether a drive.file token may create the permission
+in every case (domain sharing limits answer 403, shown in the panel).

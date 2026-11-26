@@ -37,6 +37,23 @@
 
 ## Session log
 
+### 2026-11-26: Marketplace rejection; access during the review (v0.9.0)
+
+- **Found**: gwm-review@google.com, Nov 26 (benwilkoff@gmail.com, read in
+  ben@learningischange.com): rejected for "permission adjustment MUST be
+  available during the collaborative add-on session". Their screenshots:
+  "GSM team test admin" (TEST sheet not shared) joined gsmtestuser's review;
+  panel stuck on "Choose the spreadsheet", stage "Sign in from the side panel".
+- **Done**: v0.9.0. Ask the chair for access (panel), Share / Not now (chair),
+  door channel (acr-door.js, encrypted), Drive permissions.create view only
+  after a permissions list check; stage messages for pick/asked/noaccess;
+  privacy, support, testers, TESTERS.md; decision 015; harness ?noaccess=N.
+- **Verified locally**: `node --test` (door tests included); harness: guest
+  asks, chair sees it (member does not), Share, guest follows to the applicant
+  ("0 of 3 have voted"), in the lobby and during a review.
+- **Not verified**: drive.file permissions.create against the real sheet; a
+  real Meet call with an unshared second account. Not pushed or resubmitted.
+
 ### 2026-11-24: Marketplace review started; reviewer access checked
 
 - **Found**: gwm-review@google.com (Nov 24, to benwilkoff@gmail.com, read in

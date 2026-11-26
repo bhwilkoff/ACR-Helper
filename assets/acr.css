@@ -119,3 +119,6 @@ select, input { font: inherit; min-height: 36px; padding: 0 8px; border-radius: 
 .notes-box textarea { font: inherit; min-height: 64px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical; }
 .notes-box .small-row { align-items: center; justify-content: space-between; }
 .notes-box .small-row .btn { flex: 0 0 auto; }
+.ask { border: 1px solid var(--line); border-left: 3px solid var(--accent, var(--primary)); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
+.ask p { margin: 0 0 4px; }
+.ask .small-row { margin-top: 6px; }

@@ -13,12 +13,12 @@
 <nav><a href="../privacy/">Privacy</a><a href="../terms/">Terms</a><a href="../support/">Support</a></nav></header>
 <main class="doc">
 <h1>Privacy policy</h1>
-<p class="muted">Last updated November 24, 2026.</p>
+<p class="muted">Last updated November 26, 2026.</p>
 <p>ACR Helper is a Google Meet&trade; add-on made by Ben Wilkoff. This page says what it reads, what it writes, and where information goes.</p>
 <h2>What ACR Helper asks Google for</h2>
 <ul>
 <li><strong>Your name and email address</strong> (the <code>openid</code>, <code>email</code>, and <code>profile</code> permissions), to show the committee who has voted and to name the person who recorded a decision.</li>
-<li><strong>Access to only the files you choose for it</strong> (the <code>drive.file</code> permission). The first time you open ACR Helper, Google's own file picker asks you to choose the committee's spreadsheet; ACR Helper can open that spreadsheet and nothing else in your Google Drive&trade;. It uses it to check that you can open it, to read its rows, to keep a hidden tab in it holding the key that encrypts the call's messages, for the chair, to write the committee's decision and a note into the applicant's row, and for the chair or the note-taker the chair names, to add notes to that row.</li>
+<li><strong>Access to only the files you choose for it</strong> (the <code>drive.file</code> permission). The first time you open ACR Helper, Google's own file picker asks you to choose the committee's spreadsheet; ACR Helper can open that spreadsheet and nothing else in your Google Drive&trade;. It uses it to check that you can open it, to read its rows, to keep a hidden tab in it holding the key that encrypts the call's messages, for the chair, to write the committee's decision and a note into the applicant's row, and for the chair or the note-taker the chair names, to add notes to that row. When someone in the call asks for access and you press Share, ACR Helper shares the spreadsheet with that one person, view only; it never changes sharing on its own.</li>
 </ul>
 <h2>Where spreadsheet information goes</h2>
 <ul>
@@ -28,6 +28,7 @@
 </ul>
 <h2>Votes and messages between add-ons</h2>
 <p>To keep everyone on the same applicant and to collect votes, add-ons in the same call send each other short messages through Supabase Realtime, a message relay. Every message is encrypted in your browser before it leaves, with a key that only people who can open the spreadsheet can read; the relay sees only scrambled data and stores nothing. Votes are sealed so that only the chair's add-on can open them, and only when the chair reveals them. Votes are never stored anywhere.</p>
+<p>Someone in the call who cannot open the spreadsheet yet can ask for access from the side panel. Their add-on sends their name and email address over the same relay, encrypted with a key tied to this call and this spreadsheet, so that the chair's add-on can show the request. Nothing is stored, and the spreadsheet stays closed to them until someone who can share it presses Share.</p>
 <h2>What is kept in your browser</h2>
 <p>Only the email address you last signed in with, so Google can skip asking which account to use, and a marker that ACR Helper has opened the spreadsheet in this browser. Nothing from the spreadsheet is kept.</p>
 <h2>How sensitive data is protected</h2>

@@ -87,12 +87,14 @@
   function viewPick(cancelled) {
     if (!cancelled) {
       show([el('p', 'muted', 'Choose the review spreadsheet. Google asks once.')]);
-      sendStage({ type: 'signin' });
+      sendStage({ type: 'pick' });
       openPicker();
       return;
     }
-    show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.')],
-      [button('Choose the spreadsheet', 'filled', openPicker)]);
+    show([el('p', null, 'Choose the review spreadsheet to let ACR Helper open it.'),
+      el('p', 'muted', 'If Google shows no spreadsheet, it isn\u2019t shared with ' + S.me.email + ' yet.')],
+    [button('Choose the spreadsheet', 'filled', openPicker), button('Ask the chair for access', '', askAccess)]);
+    sendStage({ type: 'pick' });
   }
   async function openPicker() {
     try {
@@ -110,7 +112,7 @@
       .enableFeature(g.Feature.NAV_HIDDEN)
       .setSize(Math.max(280, window.innerWidth - 8), Math.max(300, window.innerHeight - 8))
       .setCallback(d => {
-        if (d.action === g.Action.PICKED) { S.picked = true; afterSignIn(); }
+        if (d.action === g.Action.PICKED) { S.picked = true; S.asking = false; afterSignIn(); }
         else if (d.action === g.Action.CANCEL) viewPick(true);
       })
       .build().setVisible(true);
@@ -121,9 +123,99 @@
   }
   function begin() { signIn(false); }
   function viewNoAccess() {
-    show([el('p', null, "This review's spreadsheet isn't shared with you."),
-      el('p', 'muted', 'Ask the committee chair to share it with your Google account.')]);
+    show([el('p', null, "This review's spreadsheet isn't shared with " + S.me.email + '.')],
+      [button('Ask the chair for access', 'filled', askAccess)]);
     sendStage({ type: 'noaccess' });
+  }
+
+  // ---------- access during the review (the door, acr-door.js) ----------
+  // Marketplace review, 2026-11-26: a participant must be able to get
+  // permission while the activity runs. The sheet's own sharing stays the
+  // access list: the person asks here, and someone who can open the sheet
+  // shares it with them, read only, from their panel.
+  async function ensureDoor() {
+    if (S.door) return S.door;
+    if (!S.doorOpening) {
+      S.doorOpening = ACRDoor.openDoor({
+        sheetId: SID, meetingCode: S.meetingCode,
+        transportFor: ch => ACRTransport.make(ch, { local: HARNESS || MOCK }),
+        onChange: onDoor,
+      }).then(d => { S.door = d; return d; });
+    }
+    return S.doorOpening;
+  }
+  async function askAccess() {
+    try { await ensureDoor(); } catch (e) { return viewError(e.message); }
+    S.asking = true;
+    S.door.ask(S.me);
+    viewAsked();
+  }
+  function onDoor() {
+    const d = S.door;
+    if (!d) return;
+    if (S.asking && d.asking) {
+      if (d.granted) return accessGranted();
+      return viewAsked();
+    }
+    if (S.session && !S.busy) render();
+  }
+  function viewAsked() {
+    const d = S.door;
+    const a = d.asking;
+    if (a.answer === 'declined') {
+      show([el('p', null, 'The spreadsheet was not shared with you.')],
+        [button('Ask again', 'filled', askAccess)]);
+      sendStage({ type: 'noaccess' });
+      return;
+    }
+    const who = d.chair && d.chair.name ? d.chair.name : 'the chair';
+    const link = el('a', null, 'Or ask in Google Sheets');
+    link.href = 'https://docs.google.com/spreadsheets/d/' + SID + '/edit';
+    link.target = '_blank'; link.rel = 'noopener noreferrer'; link.referrerPolicy = 'no-referrer';
+    const linkP = el('p');
+    linkP.append(link);
+    show([el('p', null, 'Asked ' + who + ' to share the review spreadsheet with ' + a.email + '.'),
+      el('p', 'muted', 'This opens by itself once it is shared.'), linkP]);
+    sendStage({ type: 'asked', chair: d.chair ? d.chair.name : null });
+  }
+  function accessGranted() {
+    const by = S.door.asking.by;
+    S.asking = false;
+    S.door.asking = null;
+    show([el('p', null, (by || 'The chair') + ' shared the spreadsheet with you.')]);
+    if (MOCK) { API.mockUnlock(); S.picked = true; afterSignIn(); return; }
+    viewPick(false);
+  }
+  function accessRequests() {
+    const d = S.door;
+    if (!d || (S.sv && !S.sv.isChair)) return [];
+    const out = [];
+    for (const a of d.pending()) {
+      const box = el('div', 'ask');
+      if (a.state === 'shared') {
+        box.append(el('p', null, 'Shared with ' + a.name + ' (view only).'));
+      } else {
+        box.append(el('p', null, a.name + ' asks to see the review.'), el('p', 'muted', a.email));
+        if (a.error) box.append(el('p', 'error', a.error));
+        const row = el('div', 'small-row');
+        row.append(button('Share', 'small', () => shareWithAsker(a)),
+          button('Not now', 'small', () => { d.answer(a.email, false, S.me.name).catch(() => {}); }));
+        box.append(row);
+      }
+      out.push(box);
+    }
+    return out;
+  }
+  async function shareWithAsker(a) {
+    a.error = null;
+    try {
+      await API.shareWith(SID, a.email);
+      await S.door.answer(a.email, true, S.me.name);
+      setTimeout(() => S.door.clearShared(a.email), 8000);
+    } catch (e) {
+      a.error = (e.status === 403 ? 'Google did not let you share it: ' : 'Something went wrong: ') + e.message;
+      render();
+    }
   }
   function viewSignIn() {
     // Ben, 2026-11-23: one button, nothing else that signs in. A new person
@@ -186,8 +278,10 @@
     }
     const field = el('label', 'field');
     field.append(el('span', null, 'Tab to review'), sel);
-    show([el('p', 'muted', 'No review is running in this call yet.'), field,
-      el('p', 'muted', 'Starting makes you chair: everyone who joins sees the applicant you choose.')],
+    if (S.lobbyTab) sel.value = S.lobbyTab;
+    sel.addEventListener('change', () => { S.lobbyTab = sel.value; });
+    show(accessRequests().concat([el('p', 'muted', 'No review is running in this call yet.'), field,
+      el('p', 'muted', 'Starting makes you chair: everyone who joins sees the applicant you choose.')]),
       [button('Start review', 'filled', () => startReview(sel.value))]);
     sendStage({ type: 'waiting' });
   }
@@ -226,7 +320,7 @@
 
     const head = el('div', 'compact');
     head.append(el('h2', 'app-name', a.name || a.id), el('div', 'muted', a.id + ' · ' + sv.n + ' of ' + sv.total + ' · ' + sv.tab));
-    const nodes = [head, linkRow(a)];
+    const nodes = accessRequests().concat([head, linkRow(a)]);
 
     if (sv.recorded) {
       nodes.push(el('p', 'recorded c-' + sv.recorded, 'Recorded: ' + sv.recorded));
@@ -504,6 +598,7 @@
       throw e;
     }
     $sub.textContent = S.sheet.title;
+    ensureDoor().catch(e => { S.lastError = 'door: ' + e.message; });
     try { localStorage.setItem('acr-ready', '1'); } catch (_) {}
     return true;
   }
@@ -527,6 +622,7 @@
         if (S.sv && v && v.round !== S.sv.round) { S.pick = null; S.confirm = null; }
         const reread = S.sv && v && v.rowRev !== S.sv.rowRev && S.tab === v.tab;
         S.sv = v;
+        if (S.door) S.door.setRunning(v && v.isChair ? S.me : null);
         if (reread) loadTab(v.tab).then(render, e => { S.lastError = e.message; render(); });
         else render();
       },
@@ -631,6 +727,7 @@
     $diag.textContent = 'v' + ACR_CONFIG.version + (MOCK ? ' MOCK' : '') + ' me=' + (S.me ? S.me.name : '-') +
       ' chair=' + (sv ? sv.isChair : '-') + ' activity=' + S.activity + ' tab=' + (S.tab || '-') +
       ' row=' + (sv ? sv.sheetRow : '-') + ' present=' + (sv ? sv.present : '-') +
+      ' door=' + (S.door ? (S.door.asking ? 'asking' : S.door.pending().length + ' asks') : '-') +
       ' channel=' + (S.transport ? S.transport.kind + (S.transport.state ? ':' + S.transport.state : '') : '-') +
       (S.tokenExpiresAt ? ' token=' + Math.round((S.tokenExpiresAt - Date.now()) / 60000) + 'm' : '') +
       (S.session && S.session.lastError ? '\nsession: ' + S.session.lastError : '') +
@@ -643,7 +740,7 @@
       if (MOCK) {
         await loadScript('../assets/mock.js?v=' + ACR_CONFIG.version);
         const who = params.get('as') || 'Test Chair';
-        API.useMock(window.ACR_MOCK, { name: who, email: who.toLowerCase().replace(/\W+/g, '.') + '@example.invalid' });
+        API.useMock(window.ACR_MOCK, { name: who, email: who.toLowerCase().replace(/\W+/g, '.') + '@example.invalid' }, params.get('noaccess') === '1');
       }
       if (!HARNESS) await connectMeet();
       if (!MOCK) { viewSignIn(); return; }

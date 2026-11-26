@@ -24,7 +24,8 @@ Then the tester, signed in to Chrome as that account:
    ("Deployment installed successfully").
 5. In a Meet call: Activities > Add-ons > ACR Helper. The first sign-in
    shows Google's permission window once (drive.file), then the file picker
-   in the side panel.
+   in the side panel. A tester the sheet isn't shared with presses **Ask the
+   chair for access**; the chair presses **Share** in their panel (v0.9.0).
 
 Testers so far (Nov 19, 2026): benwilkoff@gmail.com; samantha@minerva.edu and cintia.kussuda@minerva.edu (roles, test users, and TEST sheet read access all read back). Send testers https://acr.humanshaped.org/testers/ for steps 4 and 5.
 

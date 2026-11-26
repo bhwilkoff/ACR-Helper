@@ -5,7 +5,9 @@
   let mock = null;
   let mockUser = null;
 
-  function useMock(data, user) { mock = JSON.parse(JSON.stringify(data)); mockUser = user; }
+  let mockLocked = false;
+  function useMock(data, user, locked) { mock = JSON.parse(JSON.stringify(data)); mockUser = user; mockLocked = !!locked; }
+  function mockUnlock() { mockLocked = false; }
   function setToken(t) { token = t; }
   function getToken() { return token; }
   function clear() { token = null; }
@@ -44,6 +46,7 @@
   // 200 = can open; 403/404 = cannot (thrown with that status).
   async function getSpreadsheet(id) {
     if (mock) {
+      if (mockLocked) throw new ApiError(404, 'Requested entity was not found.');
       return { title: mock.title, tabs: Object.keys(mock.tabs).map((t, i) => ({ title: t, sheetId: i })) };
     }
     const j = await call(SHEETS + encodeURIComponent(id) + '?fields=properties.title,sheets.properties(sheetId,title)');
@@ -110,6 +113,22 @@
     });
   }
 
+  // Shares the sheet with one person, read only, at the press of a person who
+  // can share it. drive.file allows this on a file this person chose for ACR Helper.
+  // Someone already on the sheet (who skipped Google's chooser) is left as is,
+  // so an editor is never turned into a viewer.
+  async function shareWith(id, email) {
+    if (mock) { (mock.sharedWith = mock.sharedWith || []).push(email); return { mock: true }; }
+    const base = 'https://www.googleapis.com/drive/v3/files/' + encodeURIComponent(id) + '/permissions?supportsAllDrives=true';
+    const list = await call(base + '&fields=permissions(emailAddress,role)');
+    const want = String(email).toLowerCase();
+    if ((list.permissions || []).some(p => String(p.emailAddress || '').toLowerCase() === want)) return { already: true };
+    return call(base + '&sendNotificationEmail=false', {
+      method: 'POST',
+      body: JSON.stringify({ type: 'user', role: 'reader', emailAddress: email }),
+    });
+  }
+
   async function getCell(id, tab, rowIndex, colIndex) {
     const a1 = ACR.quoteTab(tab) + '!' + ACR.columnLetter(colIndex) + (rowIndex + 1);
     const v = await getValues(id, a1);
@@ -122,5 +141,5 @@
     mock.tabs[tab][rowIndex][colIndex] = value;
   }
 
-  window.API = { mockSet, useMock, setToken, getToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, ApiError };
+  window.API = { mockSet, useMock, mockUnlock, shareWith, setToken, getToken, clear, getSpreadsheet, getValues, getCell, writeCell, getUserInfo, getAcrKey, createAcrKey, ApiError };
 })();
