@@ -79,6 +79,11 @@
   tester), so there was no second asker.
 - **Filming**: stopped; the Mac froze (load 58 with three other sessions).
   Clips so far are on the old sheet. samantha and cintia are not on the copy.
+- **Video (v0.9.2)**: filmed in call cfw-vrff-usu (gmail chair, minerva
+  off the copy and disconnected from ACR Helper first, restored to Editor
+  after); built with build2.sh, 3:43, ~/Movies/acr-helper-marketplace-review-v0.9.2.mp4.
+  Not uploaded; ready if the reviewers ask. TEST-0012 on the copy now `Maybe`
+  with a TEST note.
 - **Reply** sent by Ben. **Resubmitted** ~13:45 MST (Ben: "Test, then resubmit"); read back "in review".
 
 ### 2026-11-26: Marketplace rejection; access during the review (v0.9.0)
