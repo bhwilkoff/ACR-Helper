@@ -18,14 +18,15 @@
   itself in the side panel, lobby; returning users no window. Listing scopes fixed
   and resubmitted Nov 23. ACR Helper grants removed from both Ben accounts
   for the video: each sees consent (and gmail the picker) next time.
-- **Marketplace (Nov 26)**: rejected (permission adjustment during the
-  session); v0.9.1 fixes it, verified in Meet. Ben sent the reply; listing
-  resubmitted Nov 26 ~15:45 MST. Reply bounced only from the Cc
-  (meet-addons-review-responses@google.com, a group closed to outside
-  senders); gwm-review@google.com got it. Ben, Nov 26 ("Yes. Let's do it."):
-  review cancelled, Developer and Application Website URLs changed to
-  https://acr.humanshaped.org/ (read back after Save Draft), resubmitted
-  ~16:55 MST ("Review submitted", "The draft is in review").
+- **Marketplace (Nov 27)**: rejected again 10:21 MST ("Spreadsheet is not
+  accessible to create a votation"; gsmtestuser's picker said "No
+  spreadsheets"). Root cause: the account hint lived in localStorage, shared
+  by every Meet tab in a Chrome profile, so the reviewer's second account
+  took the first account's token. v0.9.2 (2c9e147) keeps it per tab, names
+  the account on the pick screen; review TEST sheet is now a gmail-owned
+  copy (1vQemIaw...; gsmtestuser and minerva Editors). Verified in Meet.
+  Reply drafted in ben@learningischange.com (Google's Nov 27 thread, no Cc,
+  no links), not sent; listing not yet resubmitted.
 - **Marketplace review (Nov 24)**: started. TEST sheet shared with
   gsmtestuser@marketplacetest.net (Editor); reply drafted in
   ben@learningischange.com, waiting on Ben to send.
@@ -44,6 +45,31 @@
 ---
 
 ## Session log
+
+### 2026-11-27: Third rejection; root cause found (v0.9.2)
+
+- **Found**: Nov 27 rejection (gwm-review, 10:21 MST): Functionality,
+  "Spreadsheet is not accessible to create a votation"; the recording shows
+  GSM Test User's panel picker with "No spreadsheets" (gsmtestuser is an
+  Editor). The earlier session (fff10d04) had been filming a new video; its
+  stray "Transfer ownership" press changed nothing (owner read back).
+- **Root cause**: `acr-hint` in localStorage is shared by all Meet tabs in a
+  Chrome profile; with both test accounts in one browser, the second panel
+  got the first account's token silently. Same bug as Nov 26 (minerva panel
+  landed on gmail), which was only patched with Use another account.
+- **Done**: v0.9.2 (2c9e147): hint in sessionStorage; pick screen says
+  "Signed in as ..." with Use another account; picker setTitle (Google's
+  drive.file picker ignores it). TEST copy owned by benwilkoff@gmail.com
+  (Ben: "Copy to gmail"), shared with gsmtestuser and minerva (writer, read
+  back); config points at it. Support and tester steps updated.
+- **Verified in Meet (call yyp-xkso-oah, 13:04-13:09)**: one Chrome profile
+  (minerva), tab A as gmail, tab B as minerva. Each got Google's account
+  chooser; A reached the lobby on the copy; B's panel said "isn't shared with
+  ben.wilkoff@minerva.edu" after Cancel, i.e. its own account.
+- **Not verified**: Ask/Share on the gmail-owned copy; Start review on it.
+- **Filming**: stopped; the Mac froze (load 58 with three other sessions).
+  Clips so far are on the old sheet. samantha and cintia are not on the copy.
+- **Reply** drafted, not sent. Listing not resubmitted.
 
 ### 2026-11-26: Marketplace rejection; access during the review (v0.9.0)
 
@@ -81,67 +107,3 @@
   Ben read and sent it. **Resubmitted** the store listing (Ben: "Go ahead and
   do the republish"); read back "The draft is in review and can't be edited".
 - **Not verified**: the Not now path in Meet; Share refused by domain limits.
-
-### 2026-11-24: Marketplace review started; reviewer access checked
-
-- **Found**: gwm-review@google.com (Nov 24, to benwilkoff@gmail.com, read in
-  ben@learningischange.com) asks for a video and that
-  gsmtestuser@marketplacetest.net be allowed in. The TEST sheet was shared
-  only with Ben's two accounts, samantha and cintia; link access was off
-  (401 signed out), though the Nov 23 reply to the OAuth team said it was on.
-- **Done**: Ben chose Editor; TEST sheet shared with gsmtestuser (read back).
-  Reply drafted in Google's thread (ben@learningischange.com), real links
-  read back, not sent.
-- **Checked, read-only**: console scopes, listing scopes, and config.js match
-  (drive.file, email, profile, openid); Verification Center "not required";
-  listing in review; video unlisted, 3:16; every public page 200; real sheet
-  has no link access (401).
-- **Corrected (Ben: "Update everything that needs to be updated for their
-  review to be accurate.")**: support/, testers/, TESTERS.md (picker in the
-  side panel, no unverified-app warning); privacy/ (notes by the chair or the
-  note-taker; the `acr-ready` marker in the browser; date Nov 24).
-- **Found, not changed (locked during review)**: Developer and Application
-  Website URLs are still bhwilkoff.github.io/ACR-Helper (301 to
-  acr.humanshaped.org); the four screenshots predate the notes button.
-  Editing either means cancelling the review.
-- **After approval**: remove gsmtestuser from the TEST sheet; retake the
-  four screenshots. (Website URLs done Nov 26, before resubmitting.)
-- **Not verified**: the reviewer's path as gsmtestuser.
-
-### 2026-11-23: Google's verification review answered
-
-- **Found**: Google's email (Nov 23) asked for drive.file instead of
-  `spreadsheets`, data protection in the privacy policy, a new video, and
-  test credentials with steps.
-- **Done**: v0.6.0 drive.file scope + Picker with setFileIds; v0.6.1
-  setOrigin; v0.6.2 Picker moved to `addon/pick/` (top-level window).
-  Privacy section, support/tester steps, decision 014. Console: Data Access
-  now drive.file/email/profile/openid (Confirm dialog), Verification Center
-  "Verification is not required". Pages build for 51d693e errored at
-  GitHub; a manual rebuild deployed it.
-- **Verified**: localhost, a drive.file-only token got 404 on TEST before
-  the pick, 200 after, and a later token opened it with no pick. In Meet
-  (call wgf-ogzq-rtg, chair ben.wilkoff@minerva.edu, v0.6.0): sign-in with
-  no window, Start review, stage TEST-0008, vote, reveal, Record Waitlist;
-  the sheet read back `Maybe` for TEST-0008 (drive.file write).
-- **Found in Meet**: the Picker inside the panel (benwilkoff@gmail.com,
-  call qzn-wkwb-pjb) opened at 150px and listed no file, with or without
-  setOrigin; the gmail account cannot join minerva.edu calls ("You can't
-  join this video call").
-- **Verified in Meet, v0.6.2 (call tqo-tqeb-tye, 10:25-10:30)**: gmail
-  (first time, never picked) pressed Choose the spreadsheet; the pick
-  window listed the TEST sheet, Ben clicked it, the window closed itself and
-  the panel opened the lobby. gmail started the review as chair (TEST-0009);
-  minerva.edu asked to join, was admitted, joined the activity; its stage
-  said "Sign in from the side panel" until One Tap + Open the review, then
-  followed to TEST-0009 ("0 of 2", "Chair: Ben Wilkoff", no picker needed).
-  Member voted Reject: chair stage "1 of 2" with name only (sealed). Chair
-  Admit, Reveal: Admit 1 / Reject 1 with names on both. Record Reject: the
-  sheet reads `No` for TEST-0009; member saw "Recorded: Reject".
-- **Not verified**: the pick window's Cancel button in Meet (closing the
-  window returned to Choose the spreadsheet on localhost); the in-panel
-  refusal for an account without sheet access.
-- **Test data left**: TEST-0008 `Maybe` and TEST-0009 `No` with notes, in
-  the TEST sheet only.
-- Reply to Google drafted in ben.wilkoff@minerva.edu (plain text, no
-  links), not sent.
