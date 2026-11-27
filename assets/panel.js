@@ -86,7 +86,7 @@
   // the pick, 200 after, no API key needed.
   function viewPick(cancelled) {
     if (!cancelled) {
-      show([el('p', 'muted', 'Choose the review spreadsheet. Google asks once.')]);
+      show([el('p', null, 'Signed in as ' + S.me.email + '.'), el('p', 'muted', 'Choose the review spreadsheet. Google asks once.')], [otherAccount()]);
       sendStage({ type: 'pick' });
       openPicker();
       return;
@@ -107,6 +107,7 @@
       .setAppId(ACR_CONFIG.cloudProjectNumber)
       .setOAuthToken(API.getToken())
       .setOrigin(topOrigin())
+      .setTitle(S.me && S.me.email ? 'Signed in as ' + S.me.email : '')
       .addView(view)
       .enableFeature(g.Feature.SUPPORT_DRIVES)
       .enableFeature(g.Feature.NAV_HIDDEN)
@@ -131,7 +132,7 @@
   // wrong one (measured in Meet, 2026-11-26); Google's chooser fixes it.
   function otherAccount() {
     return button('Use another account', 'small', () => {
-      try { localStorage.removeItem('acr-hint'); } catch (_) {}
+      try { sessionStorage.removeItem('acr-hint'); } catch (_) {}
       S.picked = false; S.asking = false;
       signIn(false, false, true);
     });
@@ -255,7 +256,7 @@
       callback: r => {
         const email = emailFromCredential(r && r.credential);
         if (!email) return;
-        try { localStorage.setItem('acr-hint', email); } catch (_) {}
+        try { sessionStorage.setItem('acr-hint', email); } catch (_) {}
         show([el('p', null, 'Signed in to Google as ' + email + '.')],
           [button('Open the review', 'filled', begin)]);
         // The press on One Tap counts as this frame's click, so Google's one
@@ -682,10 +683,12 @@
     pendingAgain = !!again;
     const c = initTokenClient();
     if (!c) return signInTab(again);
-    // The last account used here is a per-person convenience (no sheet data),
-    // so Google can skip its account chooser. Storage can be refused; that is fine.
+    // The last account used in THIS tab, so Google can skip its chooser. Per tab,
+    // never localStorage: every Meet tab in a Chrome profile shares that, so a
+    // second account's panel silently got the first account's token (Marketplace
+    // rejection, 2026-11-27: gsmtestuser's picker said "No spreadsheets").
     let hint = '';
-    try { hint = localStorage.getItem('acr-hint') || ''; } catch (_) {}
+    try { hint = sessionStorage.getItem('acr-hint') || ''; } catch (_) {}
     const opts = consent ? { prompt: 'consent' } : {};
     if (choose) opts.prompt = 'select_account';
     else if (hint) opts.hint = hint;
@@ -714,7 +717,7 @@
   async function afterSignIn() {
     try {
       S.me = await API.getUserInfo();
-      try { if (S.me && S.me.email) localStorage.setItem('acr-hint', S.me.email); } catch (_) {}
+      try { if (S.me && S.me.email) sessionStorage.setItem('acr-hint', S.me.email); } catch (_) {}
       if (!(await checkAccess())) return;
       if (!S.session) await openSession();
       setTimeout(() => { if (!S.sv) viewLobby(); }, 2500);

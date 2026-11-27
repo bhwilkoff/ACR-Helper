@@ -287,7 +287,9 @@ verified" until Ben sees it work in a real call.
    written in M1) in the Marketplace SDK and press **Install**.
 7. **Test copy**: made November 19, 2026 in Ben's minerva.edu Drive,
    "TEST - ACR Helper fake applicants (no real data)",
-   `1ZCsMmoUErQurrT7SQX5yz5F_fHDAm2DiJxM-eMTcnso`: the real 42 headers,
+   `1ZCsMmoUErQurrT7SQX5yz5F_fHDAm2DiJxM-eMTcnso` (since November 27, 2026
+   the add-on uses a copy owned by benwilkoff@gmail.com,
+   `1vQemIawJGju3Qh6ucEYqhjFLA7BDXCUr3OSB2i40UsU`): the real 42 headers,
    12 invented applicants (IDs `2026-TEST-0001`...), some blank and
    `NULL` cells. Share it with the test accounts. Its tab still needs
    renaming to "Early Action" plus a second "Regular Decision" tab to
