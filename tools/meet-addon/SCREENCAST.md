@@ -1,3 +1,29 @@
+# Marketplace review video (v0.9.2), 2026-11-27
+
+**Not uploaded yet** (kept ready in case the reviewers ask). Built with
+`screencast/build2.sh <clips> <work>` from window clips s1-start, s2-join,
+s3-google, s3b-consent, s4-picker, s4b-asked.png (a still: the recorder
+dropped), s5-share, s6-select, s7-vote, s8-sheet and cards 01-10. Call
+cfw-vrff-usu: chair benwilkoff@gmail.com (owner of the gmail TEST copy) in
+the gmail Chrome profile; participant ben.wilkoff@minerva.edu in the minerva
+profile, taken off the copy and disconnected from ACR Helper in Drive first,
+so the chooser, consent and the empty picker show. minerva restored to
+Editor after (read back). TEST-0012 now reads `Maybe` with a TEST note.
+
+What made filming work on a loaded Mac:
+- Ask the other Claude sessions to stay out of Chrome first; they agreed.
+- Only the front window renders; raise it by AppleScript window id after
+  `activate` (raising by URL left the gmail window on top).
+- Chrome's debugging banner comes and goes and shifts the page about 53 px;
+  build2.sh crops from y=210 and blurs the pill area.
+- The recorder drops ("connection being interrupted") when Google's window
+  is raised or under load; check `done: N frames` after every clip.
+- Picker rows and Meet buttons were clicked through the extension at
+  coordinates mapped from window captures; Google's windows through
+  Accessibility (focus, then Return or Space with Chrome frontmost).
+
+---
+
 # Review video (drive.file), 2026-11-23
 
 **Uploaded:** youtu.be/ruo5K9UMRr8 (v0.8.1: one button, one Google window,

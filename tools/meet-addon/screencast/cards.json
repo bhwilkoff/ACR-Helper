@@ -1,37 +1,53 @@
 [
  {
-  "kicker": "OAuth verification · project 29360684398 · acr-helper",
+  "kicker": "Marketplace review · project 29360684398 · version 0.9.2",
   "title": "ACR Helper: a Google Meet™ add-on for a committee deciding on one applicant at a time",
   "body": [
-   "This video shows every user-facing feature end to end, on a spreadsheet of made-up applicants labeled TEST.",
-   "Scopes requested: openid, userinfo.email, userinfo.profile, and drive.file. Nothing else is read from Google, and no spreadsheet data is sent to any server."
+   "This video shows the whole workflow with two people in one call, on a spreadsheet of made-up applicants labeled TEST.",
+   "Scopes requested: openid, userinfo.email, userinfo.profile, and drive.file. No spreadsheet data is sent to any server."
+  ]
+ },
+ {
+  "kicker": "Two participants",
+  "title": "The chair has the spreadsheet. The second participant was never given access.",
+  "body": [
+   "The chair has already chosen the TEST spreadsheet and starts the review.",
+   "The second participant joins the running activity. The spreadsheet is not shared with them, so the add-on must let them get access during the session."
   ]
  },
  {
   "kicker": "1 · Sign in: one button, one Google window",
-  "title": "Sign in with Google opens Google's consent window with every scope",
+  "title": "Sign in with Google: each participant chooses their own account",
   "body": [
-   "openid, userinfo.email, userinfo.profile: sign the person in and show their name to the committee when they vote.",
-   "drive.file: see and change only the specific Google Drive files the person chooses for ACR Helper. One Tap is not used: it returns only an ID token, never Drive access, and for a new user it adds a second Google window."
+   "When the browser holds several Google accounts, Google's account chooser appears in each Meet tab, so every panel signs in as the person in the call.",
+   "openid, userinfo.email, userinfo.profile: sign the person in and show their name to the committee. drive.file: see and change only the files the person chooses for ACR Helper."
   ]
  },
  {
   "kicker": "2 · drive.file (the person chooses the file)",
-  "title": "Google's file picker opens by itself in the side panel",
+  "title": "The picker lists only spreadsheets shared with the person",
   "body": [
-   "The first time only, the person selects the committee's spreadsheet in the Google Picker (setFileIds). ACR Helper can then open that one file and nothing else in their Drive.",
-   "The picker lists the spreadsheet only if it is shared with the person, so the spreadsheet's own sharing decides who can use the add-on."
+   "Google's file picker opens by itself in the side panel. It has nothing to show, because the spreadsheet is not shared with this participant yet.",
+   "The panel says so and offers Ask the chair for access. The main stage says who is running the review."
   ]
  },
  {
-  "kicker": "3 · drive.file (read)",
-  "title": "The panel opens the chosen spreadsheet with the person's own token",
+  "kicker": "3 · Permission adjustment during the session",
+  "title": "The chair sees the request and presses Share",
   "body": [
-   "Start review reads the first row without a decision and shows that applicant on Meet's main stage."
+   "The request reaches the chair's side panel within the call. Share gives the participant view access to that one spreadsheet, using the chair's own permission on the file they chose (drive.file).",
+   "Not now declines. No one is added without the chair pressing Share."
   ]
  },
  {
-  "kicker": "4 · Deciding together",
+  "kicker": "4 · Joining the review",
+  "title": "The participant's picker opens by itself, now listing the spreadsheet",
+  "body": [
+   "They select it once, and the add-on opens the review on the applicant the chair is showing."
+  ]
+ },
+ {
+  "kicker": "5 · Deciding together",
   "title": "Private votes, revealed together",
   "body": [
    "Each member votes in their own panel; no one sees a choice until the chair presses Reveal.",
@@ -39,26 +55,26 @@
   ]
  },
  {
-  "kicker": "5 · drive.file (write)",
+  "kicker": "6 · drive.file (write)",
   "title": "The chair records the decision; a note is added",
   "body": [
    "Record writes the committee's decision into that applicant's row, with a cell note naming who recorded it and when.",
-   "Add note appends a line to the row's Notes from Admissions cell. Nothing else is changed."
+   "Add note appends a line to the row's notes cell. Nothing else is changed."
   ]
  },
  {
-  "kicker": "6 · The spreadsheet afterward",
-  "title": "What ACR Helper wrote, in the one file it can open",
+  "kicker": "7 · The spreadsheet afterward",
+  "title": "What ACR Helper changed, in the one file it can open",
   "body": [
-   "The decision cell (Maybe = Waitlist) and its note, the appended line in Notes from Admissions, and a hidden tab holding the key that encrypts messages between members' add-ons."
+   "The decision and its note in the applicant's row, and the participant now listed as a viewer in the spreadsheet's sharing."
   ]
  },
  {
   "kicker": "Summary",
-  "title": "One chosen file, the person's own permission, nothing kept elsewhere",
+  "title": "Everyone in the call can take part, with the spreadsheet's own sharing deciding access",
   "list": [
-   "openid, userinfo.email, userinfo.profile: sign-in, and the voter's name",
-   "drive.file: read the chosen spreadsheet; write the decision, a note, and the hidden key tab",
+   "openid, userinfo.email, userinfo.profile: sign-in, and each member's name",
+   "drive.file: read the chosen spreadsheet; write the decision and a note; share it with a participant when the chair presses Share",
    "No other file or Google data is opened",
    "Privacy policy: acr.humanshaped.org/privacy/"
   ]
