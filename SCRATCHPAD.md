@@ -20,7 +20,12 @@
   for the video: each sees consent (and gmail the picker) next time.
 - **Marketplace (Nov 26)**: rejected (permission adjustment during the
   session); v0.9.1 fixes it, verified in Meet. Ben sent the reply; listing
-  resubmitted Nov 26 ~15:45 MST (read back "The draft is in review").
+  resubmitted Nov 26 ~15:45 MST. Reply bounced only from the Cc
+  (meet-addons-review-responses@google.com, a group closed to outside
+  senders); gwm-review@google.com got it. Ben, Nov 26 ("Yes. Let's do it."):
+  review cancelled, Developer and Application Website URLs changed to
+  https://acr.humanshaped.org/ (read back after Save Draft), resubmitted
+  ~16:55 MST ("Review submitted", "The draft is in review").
 - **Marketplace review (Nov 24)**: started. TEST sheet shared with
   gsmtestuser@marketplacetest.net (Editor); reply drafted in
   ben@learningischange.com, waiting on Ben to send.
@@ -99,10 +104,8 @@
   Website URLs are still bhwilkoff.github.io/ACR-Helper (301 to
   acr.humanshaped.org); the four screenshots predate the notes button.
   Editing either means cancelling the review.
-- **After approval**: remove gsmtestuser from the TEST sheet; change the
-  Developer and Application Website URLs to https://acr.humanshaped.org/
-  (Ben, Nov 26: update rather than redirect) and retake the four screenshots,
-  in one edit.
+- **After approval**: remove gsmtestuser from the TEST sheet; retake the
+  four screenshots. (Website URLs done Nov 26, before resubmitting.)
 - **Not verified**: the reviewer's path as gsmtestuser.
 
 ### 2026-11-23: Google's verification review answered
