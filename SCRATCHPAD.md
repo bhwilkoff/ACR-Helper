@@ -25,8 +25,9 @@
   took the first account's token. v0.9.2 (2c9e147) keeps it per tab, names
   the account on the pick screen; review TEST sheet is now a gmail-owned
   copy (1vQemIaw...; gsmtestuser and minerva Editors). Verified in Meet.
-  Reply drafted in ben@learningischange.com (Google's Nov 27 thread, no Cc,
-  no links), not sent; listing not yet resubmitted.
+  Ben sent the reply. Full reviewer path verified on the copy (call
+  hqo-ioqw-eos); listing resubmitted Nov 27 ~13:45 MST ("Review submitted",
+  "The draft is in review and can't be edited").
 - **Marketplace review (Nov 24)**: started. TEST sheet shared with
   gsmtestuser@marketplacetest.net (Editor); reply drafted in
   ben@learningischange.com, waiting on Ben to send.
@@ -66,10 +67,19 @@
   (minerva), tab A as gmail, tab B as minerva. Each got Google's account
   chooser; A reached the lobby on the copy; B's panel said "isn't shared with
   ben.wilkoff@minerva.edu" after Cancel, i.e. its own account.
-- **Not verified**: Ask/Share on the gmail-owned copy; Start review on it.
+- **Verified in Meet (call hqo-ioqw-eos, 13:36-13:40)**: minerva taken off
+  the copy; gmail chair started the review; minerva's picker "No
+  spreadsheets", Cancel, Ask the chair; chair saw the request, Share, "Shared
+  with Ben Wilkoff (view only)" (Drive read back `reader`); minerva's picker
+  opened by itself listing the copy; Select; "0 of 2 have voted", Chair: Ben
+  Wilkoff. minerva restored to writer (read back). Meet's start-activity
+  confirm was cancelled once by a tab switch; "Open the main stage" fixed it.
+- **Not verified**: an Editor (not owner) pressing Share on the copy:
+  learningischange cannot install the unpublished add-on (not a draft
+  tester), so there was no second asker.
 - **Filming**: stopped; the Mac froze (load 58 with three other sessions).
   Clips so far are on the old sheet. samantha and cintia are not on the copy.
-- **Reply** drafted, not sent. Listing not resubmitted.
+- **Reply** sent by Ben. **Resubmitted** ~13:45 MST (Ben: "Test, then resubmit"); read back "in review".
 
 ### 2026-11-26: Marketplace rejection; access during the review (v0.9.0)
 
