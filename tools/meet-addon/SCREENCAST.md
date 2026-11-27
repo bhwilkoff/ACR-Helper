@@ -1,6 +1,10 @@
 # Marketplace review video (v0.9.2), 2026-11-27
 
-**Not uploaded yet** (kept ready in case the reviewers ask). Built with
+**Uploaded:** youtu.be/ZT2Bog2CBc8, Unlisted, 3:44, not made for kids, on
+Ben's "Ben Wilkoff" channel (benwilkoff@gmail.com), Nov 27 ~15:10 MST
+(Ben: "Please upload it according to the requirements so that it is ready to
+send if we need it"). Pressed "Publish anyway" while YouTube's checks ran;
+the link answered signed out (oEmbed 200). Upload copy CRF 26, 5.2 MB. Built with
 `screencast/build2.sh <clips> <work>` from window clips s1-start, s2-join,
 s3-google, s3b-consent, s4-picker, s4b-asked.png (a still: the recorder
 dropped), s5-share, s6-select, s7-vote, s8-sheet and cards 01-10. Call
